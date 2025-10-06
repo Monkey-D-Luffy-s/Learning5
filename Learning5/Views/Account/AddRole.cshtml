@@ -1,0 +1,56 @@
+﻿@model Learning5.Models.Account.Roles
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="~/lib/datatables.net-dt/css/datatables.datatables.min.css" rel="stylesheet" />
+
+<div class="container">
+    <h2 class="text-center">Add Role</h2>
+    <form asp-action="AddRole" method="post">
+        <div class="row justify-content-evenly align-items-end">
+            <div class="col-sm-4 ">
+                <label asp-for="RoleName"></label>
+                <input asp-for="RoleName" class="form-control" />
+                <span asp-validation-for="RoleName" class="text-danger"></span>
+            </div>
+            <div class="col-sm-4">
+                <button class="btn btn-primary" type="submit">Add Role</button>
+            </div>
+
+        </div>
+    </form>
+    <div class="row">
+        <table id="tblRole" class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>RoleId</th>
+                    <th>RoleName</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/datatables.net/datatables.min.js"></script>
+    <script src="~/lib/datatables.net-dt/js/datatables.datatables.min.js"></script>
+    <script src="~/lib/datatables.net-dt/js/datatables.datatables.js"></script>
+    <script>
+               var jq = jQuery.noConflict();
+
+        jq(document).ready(function () {
+            jq('#tblRole').DataTable({
+                ajax: {
+                    url: '/Account/GetRoles',
+                    dataSrc: ''
+                },
+                columns: [
+                    { data: 'roleId' },
+                    { data: 'roleName' }
+                ]
+            });
+        });
+
+    </script>
+
+
+</div>

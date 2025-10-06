@@ -1,0 +1,12 @@
+﻿@{
+    ViewData["Title"] = "Access Denied";
+}
+<div class="text-center mt-5">
+    <h2 class="text-danger">Access Denied</h2>
+    <p>You do not have permission to view this page.</p>
+    @if (ViewBag.ReturnUrl != null)
+    {
+        <p>Attempted URL: <strong>@ViewBag.ReturnUrl</strong></p>
+    }
+    <a class="btn btn-primary" href="/">Return Home</a>
+</div>

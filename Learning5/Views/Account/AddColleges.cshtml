@@ -1,0 +1,102 @@
+﻿@model Learning5.Models.Account.Colleges
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="~/lib/datatables.net-dt/css/datatables.datatables.min.css" rel="stylesheet" />
+<style>
+    .dt-paging-button:hover {
+        border: solid teal 2px;
+    }
+</style>
+<div class="container">
+    <h2 class="text-center">Add College</h2>
+    <div class="row">
+        <span class="text-danger">@ViewBag.Message</span>
+
+        <form asp-action="AddColleges" method="post" enctype="multipart/form-data">
+            <div class="row">
+                <div class="col-sm-4 my-2">
+                    <label asp-for="CollegeName"></label>
+                    <input asp-for="CollegeName" class="form-control" />
+                    <span asp-validation-for="CollegeName" class="text-danger"></span>
+                </div>
+                <div class="col-sm-4 my-2 ">
+                    <label asp-for="CollegeType">Select Time</label>
+                    <select asp-for="CollegeType" class="form-control">
+                        <option value="">-- Select CollegeType --</option>
+                        <option value="SSC-Intermediate">SSC-Intermediate</option>
+                        <option value="Degree">Degree</option>
+                        <option value="Engineering">Engineering</option>
+                        <option value="polytechnic">polytechnic </option>
+                        <option value="PostGraduation">PostGraduation</option>
+                    </select>
+                    <span asp-validation-for="CollegeType" class="text-danger"></span>
+                </div>
+                <div class="col-sm-4 my-2">
+                    <label asp-for="CollegeDescription"></label>
+                    <input asp-for="CollegeDescription" class="form-control" />
+                    <span asp-validation-for="CollegeDescription" class="text-danger"></span>
+                </div>
+                <div class="col-sm-4 my-2 ">
+                    <label asp-for="CollegeAddress"></label>
+                    <input asp-for="CollegeAddress" class="form-control" />
+                    <span asp-validation-for="CollegeAddress" class="text-danger"></span>
+                </div>
+            
+
+                <button type="submit" class="btn btn-primary">Add College</button>
+            </div>
+        </form>
+
+
+    </div>
+    <div class="row my-4">
+        <table id="tblClg" class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>S.No.</th>
+                    <th>College Name</th>
+                    <th>CollegeCode</th>
+                    <th>CollegeType</th>
+                    <th>CollegeDescription</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/datatables.net/datatables.min.js"></script>
+    <script src="~/lib/datatables.net-dt/js/datatables.datatables.min.js"></script>
+    <script src="~/lib/datatables.net-dt/js/datatables.datatables.js"></script>
+    <script>
+         var jq = jQuery.noConflict();
+
+        jq(document).ready(function () {
+            jq('#tblClg').DataTable({
+                ajax: {
+                    url: '/Account/GetCollegesList',
+                    dataSrc: function (data){
+                        console.log(data);
+                            return data;
+                    }
+                },
+                columns: [
+                    { data: '', render: function(data, type,row,meta){
+                    return meta.row + 1; }
+                    },
+                    { data: 'collegeName' },
+                    { data: 'collegeCode' },
+                    { data: 'collegeType' },
+                    { data: 'collegeDescription' },
+                    { data: '', render:function(){return `<td>
+                    <button class="btn btn-primary">Edit</button>
+                    </td>`} },
+                ]
+            });
+        });
+
+    </script>
+
+</div>

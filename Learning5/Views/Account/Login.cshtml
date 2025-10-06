@@ -1,0 +1,26 @@
+﻿@model Learning5.Models.Account.LoginUser
+
+
+<div class="container">
+    <h2 class="text-center">Login</h2>
+    <span class="text-danger">@ViewBag.Message</span>
+    <form asp-action="Login" method="post">
+
+        <div class="col-sm-4 mx-auto justify-content-center my-2">
+            <label asp-for="UserName"></label>
+            <input asp-for="UserName" class="form-control" />
+            <span asp-validation-for="UserName" class="text-danger"></span>
+        </div>
+        <div class="col-sm-4  mx-auto justify-content-center my-2">
+            <label asp-for="Password"></label>
+            <input asp-for="Password" type="password" class="form-control" />
+            <span asp-validation-for="Password" class="text-danger"></span>
+        </div>
+
+        <div class="col-sm-4 mx-auto justify-content-center my-2">
+            <button type="submit" class="btn btn-primary align-items-center">Login</button>
+        </div>
+
+
+    </form>
+</div>

@@ -1,0 +1,106 @@
+﻿
+
+<link href="~/lib/datatables.net-dt/css/datatables.datatables.min.css" rel="stylesheet" />
+<div class="container">
+    <h3 class="text-center"> Leaves for Apprval</h3>
+    <div class="row my-4">
+        <table id="tblLeaves" class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>S.No.</th>
+                    <th>Employee Name</th>
+                    <th>LeaveType</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Total Days</th>
+                    <th>Reason</th>
+                    <th>Status</th>
+                    <th>Enter Remarks</th>
+                    <th style="width:350px;">Action</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/datatables.net/datatables.min.js"></script>
+    <script src="~/lib/datatables.net-dt/js/datatables.datatables.min.js"></script>
+    <script src="~/lib/datatables.net-dt/js/datatables.datatables.js"></script>
+
+    <script>
+         var jq = jQuery.noConflict();
+
+        jq(document).ready(function () {
+            jq('#tblLeaves').DataTable({
+                ajax: {
+                    url: '/Account/GetLeavesForApproval',
+                    dataSrc: function (data){
+                        console.log(data);
+                            return data;
+                    }
+                },
+                columns: [
+                    { data: '', render: function(data, type,row,meta){
+                    return meta.row + 1; }
+                    },
+
+                    { data: 'userName' },
+                    { data: 'leaveType' },
+                    { data: 'startDate' ,render:function(data,type, row, meta){
+                    return data.split('T')[0];},},
+                    { data: 'endDate',render:function(data,type, row, meta){
+                    return data.split('T')[0];}, },
+                    { data: 'totalDays' },
+                    { data: 'reason' },
+                    { data: 'status' },
+                    { data: 'remarks',render:function(data, type, row, meta)
+                        {
+
+                            if(row.status == "Pending" ){
+                                return `<input type="text" id="remarks_${row.leaveId}" class="form-control" value="${data ? data : ''}" />`;
+                            }else{
+                                return data;
+                            }
+
+                        }
+                    },
+                    { data: '', render:function(data, type, row, meta){
+                     var display = row.status != "Pending" ? "disabled" : "";
+                        return `
+                            <td class="d-flex">
+                                    <button type="submit" class="btn btn-danger mx-1" onclick="UpdateLeave('${row.leaveId}','R');" ${display}>Reject</button>
+                                    <button type="submit" class="btn btn-primary mx-1" onclick="UpdateLeave('${row.leaveId}','Y');" ${display}>Approve</button>
+
+                            </td>`;
+                        }
+                    },
+                ]
+            });
+        });
+
+        function UpdateLeave(leaveid,flag){
+            var remarks = $(`#remarks_${leaveid}`).val();
+            var formdata = new FormData();
+            formdata.append("LeaveId",leaveid);
+            formdata.append("remarks",remarks);
+            formdata.append("flag",flag);
+             $.ajax({
+            url: '@Url.Action("UpdateLeave", "Account")',
+            type: 'POST',
+            data: formdata,
+            // These two options are required for sending FormData
+            processData: false,
+            contentType: false,
+            success: function (response) {
+
+                location.reload();
+            },
+            error: function (xhr, status, error) {
+                // The request failed, handle the error
+            }
+            });
+        }
+       
+    </script>
+</div>

@@ -1,0 +1,79 @@
+﻿@model Learning5.Models.Account.Designations
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="~/lib/datatables.net-dt/css/datatables.datatables.min.css" rel="stylesheet" />
+<style>
+    .dt-paging-button:hover {
+        border: solid teal 2px;
+    }
+</style>
+<div class="container">
+    <h2 class="text-center">Add Designation</h2>
+    <div class="row">
+        <span class="text-danger">@ViewBag.Message</span>
+
+        <form asp-action="AddDesignation" method="post" enctype="multipart/form-data">
+            <div class="row">
+                <div class="col-sm-4 my-2">
+                    <label asp-for="DesignationName"></label>
+                    <input asp-for="DesignationName" class="form-control" />
+                    <span asp-validation-for="DesignationName" class="text-danger"></span>
+                </div>
+               
+
+
+                <div class="col-sm-4">
+                    <button type="submit" class="btn btn-primary">Add Designation</button>
+                </div>
+            </div>
+        </form>
+
+
+    </div>
+    <div class="row my-4">
+        <table id="tblDesig" class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>S.No.</th>
+                    <th>Designaiton Id</th>
+                    <th>Designaiton Name</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/datatables.net/datatables.min.js"></script>
+    <script src="~/lib/datatables.net-dt/js/datatables.datatables.min.js"></script>
+    <script src="~/lib/datatables.net-dt/js/datatables.datatables.js"></script>
+    <script>
+         var jq = jQuery.noConflict();
+
+        jq(document).ready(function () {
+            jq('#tblDesig').DataTable({
+                ajax: {
+                    url: '/Account/GetDesignationList',
+                    dataSrc: function (data){
+                        console.log(data);
+                            return data;
+                    }
+                },
+                columns: [
+                    { data: '', render: function(data, type,row,meta){
+                    return meta.row + 1; }
+                    },
+                    { data: 'designationId' },
+                    { data: 'designationName' },
+                    { data: '', render:function(){return `<td>
+                    <button class="btn btn-primary">Edit</button>
+                    </td>`} },
+                ]
+            });
+        });
+
+    </script>
+
+</div>

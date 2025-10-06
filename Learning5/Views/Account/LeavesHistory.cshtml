@@ -1,0 +1,89 @@
+﻿@model Learning5.Models.Account.CancleLeaveModel
+
+<link href="~/lib/datatables.net-dt/css/datatables.datatables.min.css" rel="stylesheet" />
+<div class="container">
+    <h3 class="text-center">Leaves History</h3>
+    <div class="row my-4">
+        <table id="tblLeaves" class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>S.No.</th>
+                    
+                    <th>Employee Name</th>
+                    <th>LeaveType</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Total Days</th>
+                    <th>Reason</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/datatables.net/datatables.min.js"></script>
+    <script src="~/lib/datatables.net-dt/js/datatables.datatables.min.js"></script>
+    <script src="~/lib/datatables.net-dt/js/datatables.datatables.js"></script>
+    
+    <script>
+         var jq = jQuery.noConflict();
+       
+        jq(document).ready(function () {
+            jq('#tblLeaves').DataTable({
+                ajax: {
+                    url: '/Account/GetLeaves',
+                    dataSrc: function (data){
+                        console.log(data);
+                            return data;
+                    }
+                },
+                columns: [
+                    { data: '', render: function(data, type,row,meta){
+                    return meta.row + 1; }
+                    },
+                   
+                    { data: 'userName' },
+                    { data: 'leaveType' },
+                    { data: 'startDate' },
+                    { data: 'endDate' },
+                    { data: 'totalDays' },
+                    { data: 'reason' },
+                    { data: 'status' },
+                    { data: '', render:function(data, type, row, meta){
+                     var leaveId = row.id;
+                     var display = row.status != "Pending" ? "disabled" : "";
+                        return `
+                            <td>
+                               
+                                    <button type="submit" class="btn btn-danger" onclick="cancellLeave('${row.leaveId}');" ${display}>Cancel</button>
+                              
+                            </td>`;
+                        }
+                    },
+                ]
+            });
+        });
+
+        function cancellLeave(leaveid){
+            var formdata = new FormData();
+            formdata.append("LeaveId",leaveid);
+             $.ajax({
+            url: '@Url.Action("CancleLeave", "Account")',
+            type: 'POST',
+            data: formdata,
+            // These two options are required for sending FormData
+            processData: false,
+            contentType: false,
+            success: function (response) {
+               
+            },
+            error: function (xhr, status, error) {
+                // The request failed, handle the error
+            }
+            });
+        }
+    </script>
+</div>

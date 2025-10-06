@@ -1,0 +1,33 @@
+﻿@model Learning5.Models.Account.AssignRoleModel
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="~/lib/datatables.net-dt/css/datatables.datatables.min.css" rel="stylesheet" />
+
+<div class="container">
+    <h2 class="text-center">Assign Role</h2>
+    <form asp-action="AssignRole" method="post">
+
+        <div class="row justify-content-evenly align-items-end">
+            <div class="col-sm-4 ">
+                <label asp-for="UserName">Select Time</label>
+                <select id="UserName" name="UserName" asp-items="ViewBag.Employees" class="form-control">
+                    <option value="">-- Select User --</option>
+                </select>
+            </div>
+            <div class="col-sm-4 ">
+                <label asp-for="RoleName">Select Time</label>
+                <select id="RoleName" name="RoleName" asp-items="ViewBag.Roles" class="form-control">
+                    <option value="">-- Select Role --</option>
+                </select>
+            </div>
+            <div class="col-sm-4">
+                <button class="btn btn-primary" type="submit">Assign Role</button>
+            </div>
+
+        </div>
+    </form>
+   
+
+
+</div>

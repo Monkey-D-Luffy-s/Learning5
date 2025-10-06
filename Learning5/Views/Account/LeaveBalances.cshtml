@@ -1,0 +1,47 @@
+﻿@model Learning5.Models.Account.LaeveBalances
+
+<link href="~/lib/datatables.net-dt/css/datatables.datatables.min.css" rel="stylesheet" />
+<div class="container">
+    <h3 class="text-center">Leaves Balance</h3>
+    <div class="row my-4">
+        <table id="tblLeaves" class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Leave Type</th>
+                    <th>Total</th>
+                    <th>Availed</th>
+                    <th>Balance</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Casual Leave</td>
+                    <td>@Model.CasualTotal</td>
+                    <td>@Model.CasualAvailed</td>
+                    <td>@Model.CasualBalance</td>
+                </tr>
+               <tr>
+                   <td>Sick Leave</td>
+                    <td>@Model.SickTotal</td>
+                    <td>@Model.SickAvailed</td>
+                    <td>@Model.SickBalance</td>
+               </tr>
+               <tr>
+                   <td>Optional Leave</td>
+                   <td>@Model.OptionalTotal</td>
+                   <td>@Model.OptionalAvailed</td>
+                   <td>@Model.OptionalBalance</td>
+               </tr>
+               <tr>
+                   <td>Earned Leave</td>
+                   <td>@Model.EarnedTotal</td>
+                   <td>@Model.EarnedAvailed</td>
+                   <td>@Model.EarnedBalance</td>
+               </tr>
+              
+            </tbody>
+        </table>
+    </div>
+</div>
+   
+    

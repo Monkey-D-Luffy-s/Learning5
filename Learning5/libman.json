@@ -1,0 +1,22 @@
+{
+  "version": "3.0",
+  "defaultProvider": "cdnjs",
+  "libraries": [
+    {
+      "library": "toastr.js@2.1.4",
+      "destination": "wwwroot/lib/toastr.js/"
+    },
+    {
+      "library": "datatables.net@2.3.4",
+      "destination": "wwwroot/lib/datatables.net/"
+    },
+    {
+      "library": "select2@4.0.13",
+      "destination": "wwwroot/lib/select2/"
+    },
+    {
+      "library": "datatables.net-dt@2.3.4",
+      "destination": "wwwroot/lib/datatables.net-dt/"
+    }
+  ]
+}

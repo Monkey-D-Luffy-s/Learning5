@@ -1,0 +1,36 @@
+﻿<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+<script src="~/lib/toastr.js/toastr.min.js"></script>
+<script src="~/lib/datatables.net/datatables.min.js"></script>
+<script src="~/lib/datatables.net-dt/js/datatables.datatables.min.js"></script>
+<script src="~/lib/select2/js/select2.full.js"></script>
+<script src="~/lib/select2/js/select2.full.min.js"></script>
+<script src="~/lib/select2/js/select2.js"></script>
+<script src="~/lib/select2/js/select2.min.js"></script>
+<script>
+    toastr.options = {
+        "closeButton": true,
+        "progressBar": true,
+        "positionClass": "toast-top-right",
+        "timeOut": "3000"
+    };
+</script>
+
+<script>
+    $(function () {
+        // Check if TempData has any messages
+        var successMessage = '@TempData["SuccessMessage"]';
+        var errorMessage = '@TempData["ErrorMessage"]';
+        var infoMessage = '@TempData["InfoMessage"]';
+
+        if (successMessage) {
+            toastr.success(successMessage, "Success", { timeOut: 3000, progressBar: true });
+        }
+        if (errorMessage) {
+            toastr.error(errorMessage, "Error", { timeOut: 3000, progressBar: true });
+        }
+        if (infoMessage) {
+            toastr.info(infoMessage, "Info", { timeOut: 3000, progressBar: true });
+        }
+    });
+</script>

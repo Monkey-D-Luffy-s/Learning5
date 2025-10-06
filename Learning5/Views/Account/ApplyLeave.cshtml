@@ -1,0 +1,81 @@
+﻿@model Learning5.Models.Account.LeavesModule
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="~/lib/datatables.net-dt/css/datatables.datatables.min.css" rel="stylesheet" />
+<style>
+    .dt-paging-button:hover {
+        border: solid teal 2px;
+    }
+</style>
+<div class="container">
+    <h2 class="text-center">Apply Leave</h2>
+    <div class="row">
+        <span class="text-danger">@ViewBag.Message</span>
+
+        <form asp-action="ApplyLeave" method="post" enctype="multipart/form-data">
+            <div class="row">
+                <div class="col-sm-4 my-2">
+                    <label asp-for="LeaveType"></label>
+                    <select asp-for="LeaveType" class="form-control">
+                        <option value="">-- Select LeaveType --</option>
+                        <option value="Casual Leave">Casual Leave</option>
+                        <option value="Optional Holiday">Optional Holiday</option>
+                        <option value="Earned Leave">Earned Leave</option>
+                        <option value="Sick Leave">Sick Leave</option>
+                    </select>
+                    <span asp-validation-for="LeaveType" class="text-danger"></span>
+                </div>
+                <div class="col-sm-4 my-2">
+                    <label asp-for="StartDate"></label>
+                    <input asp-for="StartDate" type="date" onchange="return CalculateDuration();" class="form-control" onclick="this.showPicker()" onfocus="this.showPicker()  />
+                    <span asp-validation-for="StartDate" class="text-danger"></span>
+                </div>
+                <div class="col-sm-4 my-2 ">
+                    <label asp-for="EndDate"></label>
+                    <input asp-for="EndDate" type="date" onchange="return CalculateDuration();" class="form-control" onclick="this.showPicker()" onfocus="this.showPicker()  />
+                    <span asp-validation-for="EndDate" class="text-danger"></span>
+                </div>
+                <div class="col-sm-4  my-2">
+                    <label asp-for="TotalDays"></label>
+                    <input asp-for="TotalDays" class="form-control" />
+                    <span asp-validation-for="TotalDays" class="text-danger"></span>
+                </div>
+                <div class="col-sm-4  my-2">
+                    <label asp-for="Reason"></label>
+                    <input asp-for="Reason" class="form-control" />
+                    <span asp-validation-for="Reason" class="text-danger"></span>
+                </div>
+                <div class="col-sm-4 text-end mt-5 ">
+                    <button type="submit" class="btn btn-primary">Apply Leave</button>
+                </div>
+
+                
+            </div>
+        </form>
+
+
+    </div>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/datatables.net/datatables.min.js"></script>
+    <script src="~/lib/datatables.net-dt/js/datatables.datatables.min.js"></script>
+    <script src="~/lib/datatables.net-dt/js/datatables.datatables.js"></script>
+
+    <script>
+
+        var jq = jQuery.noConflict();
+          function CalculateDuration() {
+            var startDate = new Date(document.getElementById("StartDate").value);
+            var endDate = new Date(document.getElementById("EndDate").value);
+            var timeDiff = endDate - startDate;
+            var daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24)) + 1;
+            if (!isNaN(daysDiff) && daysDiff > 0) {
+                document.getElementById("TotalDays").value = daysDiff;
+            } else {
+                document.getElementById("TotalDays").value = '';
+            }
+        }
+
+    </script>
+</div>
