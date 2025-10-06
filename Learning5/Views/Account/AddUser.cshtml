@@ -5,126 +5,129 @@
 }
 <link href="~/lib/datatables.net-dt/css/datatables.datatables.min.css" rel="stylesheet" />
 <style>
-    .dt-paging-button:hover{
+    .dt-paging-button:hover {
         border: solid teal 2px;
     }
 </style>
 <div class="container">
-    <h2 class="text-center">Add User</h2>
-    <div class="row">
-        <span class="text-danger">@ViewBag.Message</span>
 
-        <form asp-action="AddUser" method="post" enctype="multipart/form-data">
-            <div class="row">
-                <div class="col-sm-4 my-2">
-                    <label asp-for="EmployeeName"></label>
-                    <input asp-for="EmployeeName" class="form-control" />
-                    <span asp-validation-for="EmployeeName" class="text-danger"></span>
-                </div>
-                <div class="col-sm-4 my-2">
-                    <label asp-for="DepartmentId"></label>
-                    <input asp-for="DepartmentId" class="form-control" />
-                    <span asp-validation-for="DepartmentId" class="text-danger"></span>
-                </div>
-                <div class="col-sm-4 my-2 ">
-                    <label asp-for="DesignationId">Select Time</label>
-                    <select asp-for="DesignationId" class="form-control" asp-items="ViewBag.Designations">
-                        <option value="">-- Select Designation --</option>
-                    </select>
-                    <span asp-validation-for="DesignationId" class="text-danger"></span>
-                </div>
-                <div class="col-sm-4 my-2 ">
-                    <label asp-for="PhoneNumber"></label>
-                    <input asp-for="PhoneNumber" class="form-control" />
-                    <span asp-validation-for="PhoneNumber" class="text-danger"></span>
-                </div>
-                <div class="col-sm-4  my-2">
-                    <label asp-for="Email"></label>
-                    <input asp-for="Email" class="form-control" />
-                    <span asp-validation-for="Email" class="text-danger"></span>
-                </div>
-                <div class="col-sm-4 my-2 ">
-                    <label asp-for="AadhaarId"></label>
-                    <input asp-for="AadhaarId" class="form-control" />
-                    <span asp-validation-for="AadhaarId" class="text-danger"></span>
-                </div>
-                <div class="col-sm-4 my-2 ">
-                    <label asp-for="PanId"></label>
-                    <input asp-for="PanId" class="form-control" />
-                    <span asp-validation-for="PanId" class="text-danger"></span>
-                </div>
-                <div class="col-sm-4 my-2 ">
-                    <label asp-for="Address"></label>
-                    <input asp-for="Address" class="form-control" />
-                    <span asp-validation-for="Address" class="text-danger"></span>
-                </div>
-                <div class="col-sm-4 my-2 ">
-                    <label asp-for="CollegeCode">Select Time</label>
-                    <select asp-for="CollegeCode" class="form-control" asp-items="ViewBag.Colleges">
-                        <option value="">-- Select CollegeCode --</option>
-                    </select>
-                    <span asp-validation-for="CollegeCode" class="text-danger"></span>
-                </div>
-                <div class="col-sm-4 my-2 ">
-                    <label asp-for="BloodGroup">Select Time</label>
-                    <select asp-for="BloodGroup" class="form-control">
-                        <option value="">-- Select Bloodgroup --</option>
-                        <option value="A+">A+</option>
-                        <option value="A-">A-</option>
-                        <option value="B+">B+</option>
-                        <option value="B-">B-</option>
-                        <option value="AB+">AB+</option>
-                        <option value="AB-">AB-</option>
-                        <option value="O+">O+</option>
-                        <option value="O-">O-</option>
-                    </select>
-                    <span asp-validation-for="BloodGroup" class="text-danger"></span>
-                </div>
-                <div class="col-sm-4 my-2 ">
-                    <label asp-for="DateOfBirth"></label>
-                    <input asp-for="DateOfBirth" type="date" class="form-control" onclick="this.showPicker()" onfocus="this.showPicker()">
-                    <span asp-validation-for="DateOfBirth" class="text-danger"></span>
-                </div>
-                <div class="col-sm-4  my-2">
-                    <label asp-for="DateOfJoining"></label>
-                    <input asp-for="DateOfJoining" type="date" class="form-control" onclick="this.showPicker()" onfocus="this.showPicker()">
-                    <span asp-validation-for="DateOfJoining" class="text-danger"></span>
-                </div>
-                <div class="col-sm-4 my-2">
-                    <label asp-for="Passport_Document"></label>
-                    <input asp-for="Passport_Document" type="file" class="form-control me-sm-2" />
-                    <span asp-validation-for="Passport_Document" class="text-danger"></span>
+    <div class="card bg-black p-5 rounded-2">
+        <h2 class="text-center">Add User</h2>
+        <div class="row">
+            <span class="text-danger">@ViewBag.Message</span>
 
+            <form asp-action="AddUser" method="post" enctype="multipart/form-data">
+                <div class="row">
+                    <div class="col-md-4 my-2">
+                        <label asp-for="EmployeeName"></label>
+                        <input asp-for="EmployeeName" class="form-control" />
+                        <span asp-validation-for="EmployeeName" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-4 my-2">
+                        <label asp-for="DepartmentId"></label>
+                        <input asp-for="DepartmentId" class="form-control" />
+                        <span asp-validation-for="DepartmentId" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-4 my-2 ">
+                        <label asp-for="DesignationId">Select Time</label>
+                        <select asp-for="DesignationId" class="form-control" asp-items="ViewBag.Designations">
+                            <option value="">-- Select Designation --</option>
+                        </select>
+                        <span asp-validation-for="DesignationId" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-4 my-2 ">
+                        <label asp-for="PhoneNumber"></label>
+                        <input asp-for="PhoneNumber" class="form-control" />
+                        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-4  my-2">
+                        <label asp-for="Email"></label>
+                        <input asp-for="Email" class="form-control" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-4 my-2 ">
+                        <label asp-for="AadhaarId"></label>
+                        <input asp-for="AadhaarId" class="form-control" />
+                        <span asp-validation-for="AadhaarId" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-4 my-2 ">
+                        <label asp-for="PanId"></label>
+                        <input asp-for="PanId" class="form-control" />
+                        <span asp-validation-for="PanId" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-4 my-2 ">
+                        <label asp-for="Address"></label>
+                        <input asp-for="Address" class="form-control" />
+                        <span asp-validation-for="Address" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-4 my-2 ">
+                        <label asp-for="CollegeCode">Select Time</label>
+                        <select asp-for="CollegeCode" class="form-control" asp-items="ViewBag.Colleges">
+                            <option value="">-- Select CollegeCode --</option>
+                        </select>
+                        <span asp-validation-for="CollegeCode" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-4 my-2 ">
+                        <label asp-for="BloodGroup">Select Time</label>
+                        <select asp-for="BloodGroup" class="form-control">
+                            <option value="">-- Select Bloodgroup --</option>
+                            <option value="A+">A+</option>
+                            <option value="A-">A-</option>
+                            <option value="B+">B+</option>
+                            <option value="B-">B-</option>
+                            <option value="AB+">AB+</option>
+                            <option value="AB-">AB-</option>
+                            <option value="O+">O+</option>
+                            <option value="O-">O-</option>
+                        </select>
+                        <span asp-validation-for="BloodGroup" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-4 my-2 ">
+                        <label asp-for="DateOfBirth"></label>
+                        <input asp-for="DateOfBirth" type="date" class="form-control" onclick="this.showPicker()" onfocus="this.showPicker()">
+                        <span asp-validation-for="DateOfBirth" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-4  my-2">
+                        <label asp-for="DateOfJoining"></label>
+                        <input asp-for="DateOfJoining" type="date" class="form-control" onclick="this.showPicker()" onfocus="this.showPicker()">
+                        <span asp-validation-for="DateOfJoining" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-4 my-2">
+                        <label asp-for="Passport_Document"></label>
+                        <input asp-for="Passport_Document" type="file" class="form-control me-sm-2" />
+                        <span asp-validation-for="Passport_Document" class="text-danger"></span>
+
+                    </div>
+                    <div class="col-md-4 my-2">
+                        <label asp-for="Singnature_Document"></label>
+                        <input asp-for="Singnature_Document" type="file" class="form-control me-sm-2" />
+                        <span asp-validation-for="Singnature_Document" class="text-danger"></span>
+
+                    </div>
+
+                    <div class="col-md-4 text-end mt-4">
+                        <button type="submit" class="btn btn-primary">Add Employee</button>
+                    </div>
                 </div>
-                <div class="col-sm-4 my-2">
-                    <label asp-for="Singnature_Document"></label>
-                    <input asp-for="Singnature_Document" type="file" class="form-control me-sm-2" />
-                    <span asp-validation-for="Singnature_Document" class="text-danger"></span>
-
-                </div>
-
-                <div class="col-sm-4 text-end mt-4">
-                    <button type="submit" class="btn btn-primary">Add Employee</button>
-                </div>
-            </div>
-        </form>
+            </form>
 
 
-    </div>
-    <div class="row my-4">
-        <table id="tblEmp" class="table table-bordered table-striped">
-            <thead>
-                <tr>
-                    <th>S.No.</th>
-                    <th>Employee Name</th>
-                    <th>EmployeeId</th>
-                    <th>DepartmentId</th>
-                    <th>DateOfJoining</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
+        </div>
+        <div class="row my-4">
+            <table id="tblEmp" class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>S.No.</th>
+                        <th>Employee Name</th>
+                        <th>EmployeeId</th>
+                        <th>DepartmentId</th>
+                        <th>DateOfJoining</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
     </div>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/datatables.net/datatables.min.js"></script>

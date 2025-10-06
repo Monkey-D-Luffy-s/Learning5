@@ -10,61 +10,65 @@
     }
 </style>
 <div class="container">
-    <h2 class="text-center">Add College</h2>
-    <div class="row">
-        <span class="text-danger">@ViewBag.Message</span>
+    <div class="card bg-black p-5 rounded-2">
+        <h2 class="text-center">Add College</h2>
+        <div class="row">
+            <span class="text-danger">@ViewBag.Message</span>
 
-        <form asp-action="AddColleges" method="post" enctype="multipart/form-data">
-            <div class="row">
-                <div class="col-sm-4 my-2">
-                    <label asp-for="CollegeName"></label>
-                    <input asp-for="CollegeName" class="form-control" />
-                    <span asp-validation-for="CollegeName" class="text-danger"></span>
-                </div>
-                <div class="col-sm-4 my-2 ">
-                    <label asp-for="CollegeType">Select Time</label>
-                    <select asp-for="CollegeType" class="form-control">
-                        <option value="">-- Select CollegeType --</option>
-                        <option value="SSC-Intermediate">SSC-Intermediate</option>
-                        <option value="Degree">Degree</option>
-                        <option value="Engineering">Engineering</option>
-                        <option value="polytechnic">polytechnic </option>
-                        <option value="PostGraduation">PostGraduation</option>
-                    </select>
-                    <span asp-validation-for="CollegeType" class="text-danger"></span>
-                </div>
-                <div class="col-sm-4 my-2">
-                    <label asp-for="CollegeDescription"></label>
-                    <input asp-for="CollegeDescription" class="form-control" />
-                    <span asp-validation-for="CollegeDescription" class="text-danger"></span>
-                </div>
-                <div class="col-sm-4 my-2 ">
-                    <label asp-for="CollegeAddress"></label>
-                    <input asp-for="CollegeAddress" class="form-control" />
-                    <span asp-validation-for="CollegeAddress" class="text-danger"></span>
-                </div>
-            
+            <form asp-action="AddColleges" method="post" enctype="multipart/form-data">
+                <div class="row">
+                    <div class="col-sm-4 my-2">
+                        <label asp-for="CollegeName"></label>
+                        <input asp-for="CollegeName" class="form-control" />
+                        <span asp-validation-for="CollegeName" class="text-danger"></span>
+                    </div>
+                    <div class="col-sm-4 my-2 ">
+                        <label asp-for="CollegeType">Select Time</label>
+                        <select asp-for="CollegeType" class="form-control">
+                            <option value="">-- Select CollegeType --</option>
+                            <option value="SSC-Intermediate">SSC-Intermediate</option>
+                            <option value="Degree">Degree</option>
+                            <option value="Engineering">Engineering</option>
+                            <option value="polytechnic">polytechnic </option>
+                            <option value="PostGraduation">PostGraduation</option>
+                        </select>
+                        <span asp-validation-for="CollegeType" class="text-danger"></span>
+                    </div>
+                    <div class="col-sm-4 my-2">
+                        <label asp-for="CollegeDescription"></label>
+                        <input asp-for="CollegeDescription" class="form-control" />
+                        <span asp-validation-for="CollegeDescription" class="text-danger"></span>
+                    </div>
+                    <div class="col-sm-4 my-2 ">
+                        <label asp-for="CollegeAddress"></label>
+                        <input asp-for="CollegeAddress" class="form-control" />
+                        <span asp-validation-for="CollegeAddress" class="text-danger"></span>
+                    </div>
 
-                <button type="submit" class="btn btn-primary">Add College</button>
-            </div>
-        </form>
+                    <div class="col-sm-4 my-2 ">
+
+                        <button type="submit" class="btn btn-primary">Add College</button>
+                    </div>
+                </div>
+            </form>
 
 
-    </div>
-    <div class="row my-4">
-        <table id="tblClg" class="table table-bordered table-striped">
-            <thead>
-                <tr>
-                    <th>S.No.</th>
-                    <th>College Name</th>
-                    <th>CollegeCode</th>
-                    <th>CollegeType</th>
-                    <th>CollegeDescription</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
+        </div>
+        <div class="row my-4">
+            <table id="tblClg" class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>S.No.</th>
+                        <th>College Name</th>
+                        <th>CollegeCode</th>
+                        <th>CollegeType</th>
+                        <th>CollegeDescription</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
     </div>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/datatables.net/datatables.min.js"></script>

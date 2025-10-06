@@ -2,35 +2,36 @@
 
 <link href="~/lib/datatables.net-dt/css/datatables.datatables.min.css" rel="stylesheet" />
 <div class="container">
-    <h3 class="text-center">Leaves History</h3>
-    <div class="row my-4">
-        <table id="tblLeaves" class="table table-bordered table-striped">
-            <thead>
-                <tr>
-                    <th>S.No.</th>
-                    
-                    <th>Employee Name</th>
-                    <th>LeaveType</th>
-                    <th>Start Date</th>
-                    <th>End Date</th>
-                    <th>Total Days</th>
-                    <th>Reason</th>
-                    <th>Status</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
-    </div>
+    <div class="card bg-black p-5 rounded-3">
+        <h3 class="text-center">Leaves History</h3>
+        <div class="row my-4">
+            <table id="tblLeaves" class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>S.No.</th>
 
+                        <th>Employee Name</th>
+                        <th>LeaveType</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Total Days</th>
+                        <th>Reason</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/datatables.net/datatables.min.js"></script>
     <script src="~/lib/datatables.net-dt/js/datatables.datatables.min.js"></script>
     <script src="~/lib/datatables.net-dt/js/datatables.datatables.js"></script>
-    
+
     <script>
          var jq = jQuery.noConflict();
-       
+
         jq(document).ready(function () {
             jq('#tblLeaves').DataTable({
                 ajax: {
@@ -44,7 +45,7 @@
                     { data: '', render: function(data, type,row,meta){
                     return meta.row + 1; }
                     },
-                   
+
                     { data: 'userName' },
                     { data: 'leaveType' },
                     { data: 'startDate' },
@@ -57,9 +58,9 @@
                      var display = row.status != "Pending" ? "disabled" : "";
                         return `
                             <td>
-                               
+
                                     <button type="submit" class="btn btn-danger" onclick="cancellLeave('${row.leaveId}');" ${display}>Cancel</button>
-                              
+
                             </td>`;
                         }
                     },
@@ -78,7 +79,7 @@
             processData: false,
             contentType: false,
             success: function (response) {
-               
+
             },
             error: function (xhr, status, error) {
                 // The request failed, handle the error

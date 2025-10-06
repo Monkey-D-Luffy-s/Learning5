@@ -2,6 +2,7 @@
 
 
 <div class="container">
+    <div class="card bg-black p-5 rounded-2">
     <h2 class="text-center">Login</h2>
     <span class="text-danger">@ViewBag.Message</span>
     <form asp-action="Login" method="post">
@@ -17,10 +18,11 @@
             <span asp-validation-for="Password" class="text-danger"></span>
         </div>
 
-        <div class="col-sm-4 mx-auto justify-content-center my-2">
-            <button type="submit" class="btn btn-primary align-items-center">Login</button>
+        <div class="col-sm-4  text-center my-2">
+            <button type="submit" class="px-4 btn btn-primary align-items-center">Login</button>
         </div>
 
 
     </form>
+    </div>
 </div>
