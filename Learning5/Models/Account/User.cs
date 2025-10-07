@@ -18,6 +18,8 @@ namespace Learning5.Models.Account
 
         [Required(ErrorMessage = "PanId required")]
         [StringLength(10, ErrorMessage = "PAN number must be 10 digits")]
+        [RegularExpression(@"^[A-Z]{5}[0-9]{4}[A-Z]{1}$",
+            ErrorMessage = "Invalid PAN format. Example: ABCDE1234F")]
         public string? PanId { get; set; }
         [Required(ErrorMessage = "Address required")]
         public string? Address { get; set; }

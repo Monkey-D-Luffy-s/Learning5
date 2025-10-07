@@ -1,0 +1,199 @@
+﻿@model Learning5.Models.Account.IdCardModel
+
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ID Card</title>
+    <style>
+        /* CR80 credit-card size: 85.6mm × 54mm - use mm for accurate print sizing */
+        .id-card-wrapper {
+            width: 85.6mm;
+            height: 54mm;
+            box-sizing: border-box;
+            padding: 6mm;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+        }
+
+        .id-card {
+            width: 100%;
+            height: 100%;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            border: 1px solid #cfcfcf;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(180deg, #ffffff 0%, #f7fbff 100%);
+        }
+
+        .top-bar {
+            display:flex;
+            align-items:center;
+            padding: 6px 10px;
+            gap: 10px;
+            border-bottom: 1px solid rgba(0,0,0,0.06);
+            background: rgba(0,0,0,0.02);
+        }
+
+        .emblem {
+            width: 42px;
+            height: 42px;
+            object-fit: contain;
+        }
+
+        .college-name {
+            font-size: 12px;
+            font-weight: 700;
+            line-height: 1.05;
+            letter-spacing: 0.3px;
+        }
+
+        .card-body {
+            display:flex;
+            flex:1;
+            padding: 8px 10px;
+            gap: 10px;
+            align-items:stretch;
+        }
+
+        .photo {
+            width: 30mm;
+            height: 36mm;
+            border-radius: 4px;
+            object-fit: cover;
+            border: 1px solid #ddd;
+            background: #eee;
+        }
+
+        .details {
+            flex:1;
+            display:flex;
+            flex-direction:column;
+            justify-content:space-between;
+            padding: 4px 6px;
+        }
+
+        .person {
+            margin-left:4px;
+        }
+
+        .label {
+            font-size:10px;
+            color:#555;
+            text-transform:uppercase;
+            letter-spacing:0.8px;
+        }
+
+        .value {
+            font-size:13px;
+            font-weight:600;
+            color:#111;
+            margin-top:2px;
+        }
+
+        .meta-row {
+            display:flex;
+            gap:12px;
+            align-items:center;
+        }
+
+        .signatures {
+            display:flex;
+            justify-content:space-between;
+            align-items:flex-end;
+            gap:10px;
+            padding: 6px 10px;
+            border-top: 1px dashed rgba(0,0,0,0.06);
+            font-size:10px;
+        }
+
+        .sig-box {
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            width:40%;
+        }
+
+        .sig-img {
+            width:60%;
+            max-height:18mm;
+            object-fit:contain;
+        }
+
+        .sig-label { margin-top:4px; font-weight:600; }
+
+        .small {
+            font-size:9px; color:#444;
+        }
+
+       
+       
+    </style>
+</head>
+<body>
+
+    <div class="id-card-wrapper">
+        <div class="id-card">
+            <div class="top-bar">
+                <img class="emblem" src="@(Model?.EmblemUrl ?? Url.Content("~/uploads/Emblem.png"))" alt="Emblem" />
+                <div>
+                    <div class="college-name">@(Model?.CollegeName ?? "Your College Name")</div>
+                    <div class="small">Official Identity Card</div>
+                </div>
+                <div style="margin-left:auto; text-align:right; font-size:10px;" class="small">
+                    <div>Employee ID: <strong>@(Model?.EmployeeId ?? "-")</strong></div>
+                    <div>Valid Till: <strong>@(Model?.ValidTill ?? "-")</strong></div>
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div>
+                    <img class="photo" src="@(Model?.PhotoUrl ?? Url.Content("~/uploads/default-profile.png"))" alt="Photo" />
+                </div>
+
+                <div class="details">
+                    <div>
+                        <div class="label">Name</div>
+                        <div class="value">@(Model?.EmployeeName ?? "Employee Name")</div>
+
+                        <div style="height:8px"></div>
+
+                        <div class="meta-row">
+                            <div>
+                                <div class="label">ID</div>
+                                <div class="value">@(Model?.EmployeeId ?? "EMP-000")</div>
+                            </div>
+
+                            <div>
+                                <div class="label">Role</div>
+                                <div class="value">@(Model?.Role ?? "Designation")</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <div class="small">Registered with: <strong>@(Model?.CollegeName ?? "Your College")</strong></div>
+                        <div style="text-align:right;" class="small">Issued on: <strong>@DateTime.Now.ToString("20 06 2026")</strong></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="signatures">
+                <div class="sig-box">
+                    <img class="sig-img" src="@(Model?.EmployeeSignatureUrl ?? Url.Content("~/uploads/default-signature.png"))" alt="Employee Signature" />
+                    <div class="sig-label">Employee Signature</div>
+                </div>
+
+                <div class="sig-box">
+                    <img class="sig-img" src="@(Model?.DirectorSignatureUrl ?? Url.Content("~/uploads/Sign2.png"))" alt="Director Signature" />
+                    <div class="sig-label">Director Signature</div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</body>
+</html>

@@ -29,14 +29,54 @@ namespace Learning5.services.Account
         {
             try
             {
-                var count = _db.Users.Count();
-                user.UserName = count < 1 ? "E10001" : "E1" + (count + 1).ToString("D4");
+                if (!string.IsNullOrEmpty(user.UserName))
+                {
+                    var obj = await _db.Users.Where(u => u.UserName == user.UserName).Include(u => u.Designations).FirstOrDefaultAsync();
+                    if(obj != null)
+                    {
+                        obj.EmployeeName = user.EmployeeName;
+                        obj.DepartmentId = user.DepartmentId;
+                        obj.DesignationId = user.DesignationId;
+                        obj.PhoneNumber = user.PhoneNumber;
+                        obj.Email = user.Email;
+                        obj.AadhaarId = user.AadhaarId;
+                        obj.PanId = user.PanId;
+                        obj.Address = user.Address;
+                        obj.CollegeCode = user.CollegeCode;
+                        obj.BloodGroup = user.BloodGroup;
+                        obj.DateOfBirth = user.DateOfBirth;
+                        obj.DateOfJoining = user.DateOfJoining;
+                        obj.Passport_DocumentPath = user.Passport_DocumentPath;
+                        obj.Singnature_DocumentPath = user.Singnature_DocumentPath;
 
-                var result = await _userManager.CreateAsync(user, user.UserName + "Hrms@123");
+                        var result = await _db.SaveChangesAsync();
+                        if (result > 0)
+                        {
+                            return "User Updated successfully.";
+                            
+                        }
+                        else
+                        {
+                            return "Failed to Update the User";
+                        }
+                    }
+                    else
+                    {
+                        return "User Not Found";
+                    }
+                }
+                else
+                {
+                    var count = _db.Users.Count();
+                    user.UserName = count < 1 ? "E10001" : "E1" + (count + 1).ToString("D4");
 
-                return result.Succeeded
-                    ? "User created successfully."
-                    : "Error creating user: " + string.Join(", ", result.Errors.Select(e => e.Description));
+                    var result = await _userManager.CreateAsync(user, user.UserName + "Hrms@123");
+
+                    return result.Succeeded
+                        ? "User created successfully."
+                        : "Error creating user: " + string.Join(", ", result.Errors.Select(e => e.Description));
+                }
+                   
             }
             catch (Exception ex)
             {
@@ -385,19 +425,32 @@ namespace Learning5.services.Account
             {
                 if (userid != "")
                 {
-                    string collegeID = await _db.Users.Where(u => u.UserName == userid)
-                        .Select(e => e.CollegeCode)
+                    var Rlist = new List<string>();
+                    var user = await _db.Users.Where(u => u.UserName == userid)
+                        .Include(u => u.DesignationId)
                         .FirstOrDefaultAsync();
+                    if(user.DesignationId != null && user.DesignationId == "D001")
+                    {
+                        Rlist.Add("D002");
+                        Rlist.Add("D003");
+                        Rlist.Add("D005");
+                    }else if (user.DesignationId != null && user.DesignationId == "D004")
+                    {
+                        Rlist = new List<string> { "D001"};
+                    }else if (user.DesignationId != null && user.DesignationId == "D006")
+                    {
+                        Rlist = new List<string> { "D001", "D004" };
+                    }
 
-                     list = await _db.LeavesModules
-                        .Join(_db.Users,
-                        LeavesModules => LeavesModules.UserName,
-                        Users => Users.UserName,
-                        (LeavesModules, Users) => new { Users, LeavesModules}
-                        )
-                        .Where(joined => joined.Users.CollegeCode == collegeID && joined.Users.UserName != userid)
-                        .Select(joined => joined.LeavesModules)
-                        .ToListAsync();
+                    list = await _db.LeavesModules
+                       .Join(_db.Users,
+                       LeavesModules => LeavesModules.UserName,
+                       Users => Users.UserName,
+                       (LeavesModules, Users) => new { Users, LeavesModules }
+                       )
+                       .Where(joined => joined.Users.CollegeCode == user.CollegeCode && Rlist.Contains(joined.Users.DesignationId))
+                       .Select(joined => joined.LeavesModules)
+                       .ToListAsync();
 
                     return list;
 
@@ -532,7 +585,42 @@ namespace Learning5.services.Account
             return profile;
         }
 
+        public async Task<IdCardModel> getIdDetails(string userId)
+        {
+            IdCardModel id = new IdCardModel();
+            try
+            {
+                var user = await _db.Users.Where(e => e.UserName == userId).Include(e => e.Designations).FirstOrDefaultAsync();
+                id.EmployeeName = user.EmployeeName;
+                id.EmployeeId = user.UserName;
+                id.Role = user.Designations.DesignationName;
+                id.PhotoUrl = user.Passport_DocumentPath;
+                id.EmployeeSignatureUrl = user.Singnature_DocumentPath;
+                id.ValidTill = DateTime.Today.ToString("2026-08-10");
 
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            return id;
+        }
+
+        public async Task<User> GetUserDetails(string UserName)
+        {
+            User user = new User();
+            try
+            {
+                user = await _db.Users.Where(u => u.UserName == UserName).Include(u => u.Designations).FirstOrDefaultAsync();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            return user;
+        }
     }
 }
 

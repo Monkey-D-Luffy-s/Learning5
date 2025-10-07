@@ -27,9 +27,11 @@ namespace Learning5.services.Account
         Task<string> ApproveLeave(string leaveId, string userId, string remarks, string flag);
         Task<LaeveBalances> GetLeaveBalance(string userId);
 
+        Task<IdCardModel> getIdDetails(string userId);
         Task<string> AddCollege(Colleges clg);
         Task<List<Colleges>> GetCollegesList();
 
+        Task<User> GetUserDetails(string UserName);
         Task<string> AddDesignation(Designations clg);
         Task<List<Designations>> GetDesignationsList();
     }

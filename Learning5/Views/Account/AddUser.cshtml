@@ -18,6 +18,11 @@
 
             <form asp-action="AddUser" method="post" enctype="multipart/form-data">
                 <div class="row">
+                    <div class="hidden" style="display:none;">
+                        <label asp-for="UserName"></label>
+                        <input asp-for="UserName" class="form-control" />
+                        
+                    </div>
                     <div class="col-md-4 my-2">
                         <label asp-for="EmployeeName"></label>
                         <input asp-for="EmployeeName" class="form-control" />
@@ -106,7 +111,7 @@
                     </div>
 
                     <div class="col-md-4 text-end mt-4">
-                        <button type="submit" class="btn btn-primary">Add Employee</button>
+                        <button type="submit" id="btnSubmit" class="btn btn-primary">Add Employee</button>
                     </div>
                 </div>
             </form>
@@ -156,8 +161,10 @@
                     return data.split('T')[0];},
                     },
                     { data: '', render:function(data, type,row,meta){return `<td>
-                    <button class="btn btn-primary" onclick="deletUser('${row.userName}');">Delete</button>
-                    </td>`} },
+                            <button class="btn btn-primary me-1" onclick="editUser('${row.userName}');">Edit</button>
+                            <button class="btn btn-danger" onclick="deleteUser('${row.userName}');">Delete</button>
+                        </td>`} 
+                    },
                 ]
             });
         });
@@ -176,6 +183,38 @@
             },
             error: function (xhr, status, error) {
             }
+            });
+        }
+
+        function editUser(username) {
+            document.getElementById("btnSubmit").innerText = "Update Employee";
+            $.ajax({
+                url: '/Account/GetUserDetails',
+                type: 'GET',
+                data: { userId: username },
+                success: function(user) {
+                    $('input[name="EmployeeName"]').val(user.employeeName);
+                    $('input[name="UserName"]').val(user.userName);
+                    $('input[name="PhoneNumber"]').val(user.phoneNumber);
+                    $('input[name="Email"]').val(user.email);
+                    $('input[name="AadhaarId"]').val(user.aadhaarId);
+                    $('input[name="PanId"]').val(user.panId);
+                    $('input[name="Address"]').val(user.address);
+                    $('input[name="DateOfBirth"]').val(user.dateOfBirth.split('T')[0]);
+                    $('input[name="DateOfJoining"]').val(user.dateOfJoining.split('T')[0]);
+
+                    $('select[name="DepartmentId"]').val(user.departmentId);
+                    $('select[name="DesignationId"]').val(user.designationId);
+                    $('select[name="CollegeCode"]').val(user.collegeCode);
+                    $('select[name="BloodGroup"]').val(user.bloodGroup);
+
+                    $('#AddUserForm').attr('data-editing', username);
+
+                    $('html, body').animate({ scrollTop: $('.card').offset().top }, 'slow');
+                },
+                error: function(err) {
+                    alert('Error fetching user data');
+                }
             });
         }
 

@@ -10,13 +10,18 @@ namespace Learning5.Controllers
     public class AccountController : Controller
     {
         private readonly IAcount _account;
-        public AccountController(IAcount _context)
+        private readonly ILogger<AccountController> _logger;
+
+        public AccountController(IAcount _context, ILogger<AccountController> logger)
         {
             _account = _context;
+            _logger = logger;
         }
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AddUser()
         {
+            string username = User.Identity.Name;
+            _logger.LogInformation($"Accessed AddUser page to {username} at {DateTime.Now}");
             ViewBag.Colleges = await _account.GetCollegesForDropdown();
             ViewBag.Designations = await _account.GetDesignationsForDropdown();
             return View();
@@ -57,19 +62,19 @@ namespace Learning5.Controllers
                         {
                             TempData["SuccessMessage"] = result.ToString();
 
-                            return RedirectToAction("AddUser");
+                           
                         }
                         else
                         {
                             TempData["ErrorMessage"] = result.ToString();
-                            return View();
+                           
                         }
 
                     }
                     catch (Exception ex)
                     {
                         TempData["ErrorMessage"] = ex.Message;
-                        return View();
+                       
 
                     }
 
@@ -85,6 +90,8 @@ namespace Learning5.Controllers
                     .FirstOrDefault();
                 ViewBag.Message = "There are validation errors.";
             }
+            ViewBag.Colleges = await _account.GetCollegesForDropdown();
+            ViewBag.Designations = await _account.GetDesignationsForDropdown();
             return View();
 
         }
@@ -182,8 +189,6 @@ namespace Learning5.Controllers
             return Json(users);
         }
         [Authorize(Roles = "Admin")]
-
-
         public async Task<IActionResult> AssignRole()
         {
             ViewBag.Roles = await _account.GetRolesForDropdown();
@@ -412,14 +417,20 @@ namespace Learning5.Controllers
         public async Task<JsonResult> GetLeavesForApproval()
         {
             string username = User.Identity.Name;
-
-
             return Json(await _account.GetLeavesForApproval(username));
         }
 
         [Authorize(Roles = "Principal")]
         public IActionResult ApproveLeaves()
         {
+
+            string username = User.Identity.Name;
+
+            if (string.IsNullOrEmpty(username))
+            {
+                return RedirectToAction("Login");
+            }
+            _logger.LogInformation($"Accessed ApproveLeaves page to {username} at {DateTime.Now}");
             return View();
         }
         [Authorize(Roles = "Principal")]
@@ -434,11 +445,14 @@ namespace Learning5.Controllers
                     var result = await _account.ApproveLeave(LeaveId, username, remarks, flag);
                     if (result.ToString().Contains("Successfully"))
                     {
+                        _logger.LogInformation($"Leave {LeaveId} approved by {username} at {DateTime.Now}");
                         TempData["SuccessMessage"] = result.ToString();
                         return Json("1");
+
                     }
                     else
                     {
+                        _logger.LogWarning($"Failed to approve leave {LeaveId} by {username} at {DateTime.Now}");
                         TempData["ErrorMessage"] = result.ToString();
                         return Json("2");
                     }
@@ -450,6 +464,7 @@ namespace Learning5.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, $"Error occurred while approving leave by {User.Identity.Name} at {DateTime.Now}");
                 TempData["ErrorMessage"] = ex.Message.ToString();
                 return Json("4");
             }
@@ -460,6 +475,14 @@ namespace Learning5.Controllers
         [Authorize(Roles = "Admin")]
         public IActionResult AddDesignation()
         {
+
+            string username = User.Identity.Name;
+
+            if (string.IsNullOrEmpty(username))
+            {
+                return RedirectToAction("Login");
+            }
+            _logger.LogInformation($"Accessed AddDesignation page to {username} at {DateTime.Now}");
             return View();
         }
         [Authorize(Roles = "Admin")]
@@ -516,6 +539,13 @@ namespace Learning5.Controllers
         [AllowAnonymous]
         public IActionResult AccessDenied(string? ReturnUrl = null)
         {
+            string username = User.Identity.Name;
+
+            if (string.IsNullOrEmpty(username))
+            {
+                return RedirectToAction("Login");
+            }
+            _logger.LogWarning($"AccessDenied page accessed by {username} at {DateTime.Now}");
             ViewBag.ReturnUrl = ReturnUrl;
             return View();
         }
@@ -532,5 +562,25 @@ namespace Learning5.Controllers
             Profile obj = await _account.GetProfile(username);
             return View(obj);
         }
+
+        [Authorize]
+        public async Task<IActionResult> IdCard() { 
+            string username = User.Identity.Name;
+            if (string.IsNullOrEmpty(username))
+            {
+                return RedirectToAction("Login");
+            }
+            IdCardModel obj = await _account.getIdDetails(username);
+            return View(obj);
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<JsonResult> GetUserDetails(string userId)
+        {
+            
+            return Json(await _account.GetUserDetails(userId));
+        }
+        
     }
 }
