@@ -15,6 +15,7 @@ namespace Learning5.data
 
         public DbSet<Roles> UserRoles { get; set; }
 
+        public DbSet<TimeSheet> TimeSheets { get; set; }
         public DbSet<Designations> Designations { get; set; }
         public DbSet<Colleges> Colleges { get; set; }
         public DbSet<LeavesModule> LeavesModules { get; set; }

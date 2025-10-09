@@ -62,19 +62,19 @@ namespace Learning5.Controllers
                         {
                             TempData["SuccessMessage"] = result.ToString();
 
-                           
+
                         }
                         else
                         {
                             TempData["ErrorMessage"] = result.ToString();
-                           
+
                         }
 
                     }
                     catch (Exception ex)
                     {
                         TempData["ErrorMessage"] = ex.Message;
-                       
+
 
                     }
 
@@ -92,7 +92,7 @@ namespace Learning5.Controllers
             }
             ViewBag.Colleges = await _account.GetCollegesForDropdown();
             ViewBag.Designations = await _account.GetDesignationsForDropdown();
-            return View();
+            return View(new User());
 
         }
         [Authorize(Roles = "Admin")]
@@ -412,7 +412,7 @@ namespace Learning5.Controllers
         {
             return Json(await _account.GetCollegesList());
         }
-        [Authorize(Roles = "Principal")]
+        [Authorize(Roles = "Principal,DIEO,RJD")]
         [HttpGet]
         public async Task<JsonResult> GetLeavesForApproval()
         {
@@ -420,7 +420,7 @@ namespace Learning5.Controllers
             return Json(await _account.GetLeavesForApproval(username));
         }
 
-        [Authorize(Roles = "Principal")]
+        [Authorize(Roles = "Principal,DIEO,RJD")]
         public IActionResult ApproveLeaves()
         {
 
@@ -433,7 +433,7 @@ namespace Learning5.Controllers
             _logger.LogInformation($"Accessed ApproveLeaves page to {username} at {DateTime.Now}");
             return View();
         }
-        [Authorize(Roles = "Principal")]
+        [Authorize(Roles = "Principal,DIEO,RJD")]
         [HttpPost]
         public async Task<JsonResult> UpdateLeave(string LeaveId, string remarks, string flag)
         {
@@ -564,7 +564,8 @@ namespace Learning5.Controllers
         }
 
         [Authorize]
-        public async Task<IActionResult> IdCard() { 
+        public async Task<IActionResult> IdCard()
+        {
             string username = User.Identity.Name;
             if (string.IsNullOrEmpty(username))
             {
@@ -578,9 +579,36 @@ namespace Learning5.Controllers
         [HttpGet]
         public async Task<JsonResult> GetUserDetails(string userId)
         {
-            
+
             return Json(await _account.GetUserDetails(userId));
         }
-        
+
+
+        [Authorize]
+        public async Task<IActionResult> TimeSheetEntry()
+        {
+            string username = User.Identity.Name;
+            if (string.IsNullOrEmpty(username))
+            {
+                return RedirectToAction("Login");
+            }
+            return View();
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> AddTimeSheetEntry(TimeSheet timesheetData)
+        {
+            string username = User.Identity.Name;
+            if (string.IsNullOrEmpty(username))
+            {
+                return RedirectToAction("Login");
+            }
+            _logger.LogInformation($"Timesheet data submitted by {username} at {DateTime.Now}: {timesheetData}");
+            timesheetData.UserId = username;
+            TempData["SuccessMessage"] = "Timesheet submitted successfully!";
+            return RedirectToAction("TimeSheetEntry");
+
+        }
     }
 }

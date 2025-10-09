@@ -123,10 +123,10 @@
                 <thead>
                     <tr>
                         <th>S.No.</th>
+                        <th>Employee ID</th>
                         <th>Employee Name</th>
-                        <th>EmployeeId</th>
-                        <th>DepartmentId</th>
-                        <th>DateOfJoining</th>
+                        <th>Designation</th>
+                        <th>College</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -153,13 +153,12 @@
                 columns: [
                     { data: '', render: function(data, type,row,meta){
                     return meta.row + 1; }
-                    },
+                    }, 
                     { data: 'userName' },
                     { data: 'employeeName' },
-                    { data: 'email' },
-                    { data: 'dateOfJoining',render:function(data,type, row, meta){
-                    return data.split('T')[0];},
-                    },
+                    { data: 'designationId' },
+                    { data: 'collegeCode'},
+                    
                     { data: '', render:function(data, type,row,meta){return `<td>
                             <button class="btn btn-primary me-1" onclick="editUser('${row.userName}');">Edit</button>
                             <button class="btn btn-danger" onclick="deleteUser('${row.userName}');">Delete</button>

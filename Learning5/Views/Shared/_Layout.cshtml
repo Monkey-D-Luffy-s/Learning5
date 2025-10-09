@@ -22,11 +22,12 @@
                 currentUser = await UserManager.GetUserAsync(User);
         }
 }
+
 <body>
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark text-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Learning5</a>
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index"><img src="~/uploads/Logo1.png" alt="Sai Infosolutions" style="height:50px;"/></a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -84,14 +85,14 @@
                                     <li class="nav-item">
                                         <a class="nav-link" asp-area="" asp-controller="Account" asp-action="IdCard">Id Card</a>
                                     </li>
-                                    @if(User.IsInRole("Principal") || User.IsInRole("Admin"))
+                                    @if (User.IsInRole("Principal") || User.IsInRole("DIEO") || User.IsInRole("RJD"))
                                     {
                                        
                                         <li class="nav-item">
                                             <a class="nav-link" asp-area="" asp-controller="Account" asp-action="ApproveLeaves">Approve Leaves</a>
                                         </li>
                                     }
-    )
+    
                                    
                                 </ul>
                             </li>
@@ -160,12 +161,12 @@
                                 <a class="d-flex align-items-center text-decoration-none dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
                                     <img src="@(string.IsNullOrEmpty(currentUser.Passport_DocumentPath) ? Url.Content("~/uploads/default-profile.png") : currentUser.Passport_DocumentPath)"
                                          alt="Profile" class="rounded-circle" width="40" height="40" />
-                                    <span class="ms-2">@currentUser.UserName</span>
+                                    <span class="ms-2">@currentUser.EmployeeName</span>
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end">
 
                                     <li class="nav-item">
-                                        <a class="nav-link" asp-area="" asp-controller="Account" asp-action="Profile">@User.Identity.Name</a>
+                                        <a class="nav-link" asp-area="" asp-controller="Account" asp-action="Profile">@currentUser.EmployeeName</a>
                                     </li>
                                     <li class="nav-item">
                                         <a class="nav-link" asp-area="" asp-controller="Account" asp-action="Logout">Logout</a>

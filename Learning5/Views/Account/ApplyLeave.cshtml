@@ -66,16 +66,31 @@
     <script>
 
         var jq = jQuery.noConflict();
-          function CalculateDuration() {
+        function CalculateDuration() {
             var startDate = new Date(document.getElementById("StartDate").value);
             var endDate = new Date(document.getElementById("EndDate").value);
-            var timeDiff = endDate - startDate;
-            var daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24)) + 1;
-            if (!isNaN(daysDiff) && daysDiff > 0) {
-                document.getElementById("TotalDays").value = daysDiff;
-            } else {
+
+            if (isNaN(startDate) || isNaN(endDate) || endDate < startDate) {
                 document.getElementById("TotalDays").value = '';
+                return;
             }
+
+            var daysDiff = 0;
+            var currentDate = new Date(startDate);
+            while (currentDate <= endDate) {
+                var day = currentDate.getDay();
+                if (day !== 0 && day !== 6) {
+                    daysDiff++;
+                }
+                currentDate.setDate(currentDate.getDate() + 1);
+            }
+
+            if(daysDiff < 1){
+                toastr.error("End Date cannot be earlier then Start date", "Error", { timeOut: 3000, progressBar: true });
+                document.getElementById("StartDate").value = '';
+                document.getElementById("EndDate").value = '';
+            }
+            document.getElementById("TotalDays").value = daysDiff;
         }
 
     </script>

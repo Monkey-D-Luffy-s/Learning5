@@ -8,7 +8,9 @@
             <thead>
                 <tr>
                     <th>S.No.</th>
+                    <th>Employee ID</th>
                     <th>Employee Name</th>
+                    <th>Designation</th>
                     <th>LeaveType</th>
                     <th>Start Date</th>
                     <th>End Date</th>
@@ -46,6 +48,8 @@
                     },
 
                     { data: 'userName' },
+                    { data: 'employeeName' },
+                    { data: 'designation' },
                     { data: 'leaveType' },
                     { data: 'startDate' ,render:function(data,type, row, meta){
                     return data.split('T')[0];},},

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Runtime.Intrinsics.X86;
 
 namespace Learning5.services.Account
@@ -112,13 +113,19 @@ namespace Learning5.services.Account
             {
                 list = await _db.Users
                     .AsNoTracking()
-                    .Where(u => u.IsActive == true)
+                    .Include(u => u.Designations)
+                    .Join(_db.Colleges,
+                        Users => Users.CollegeCode,
+                        Colleges => Colleges.CollegeCode,
+                        (Users, Colleges) => new { Users, Colleges }
+                    )
+                    .Where(u => u.Users.IsActive == true)
                     .Select(u => new User
                     {
-                        UserName = u.UserName,
-                        EmployeeName = u.EmployeeName,
-                        Email = u.Email,
-                        DateOfJoining = u.DateOfJoining,
+                        UserName = u.Users.UserName,
+                        EmployeeName = u.Users.EmployeeName,
+                        DesignationId = u.Users.Designations.DesignationName,
+                        CollegeCode = u.Colleges.CollegeName,
                     })
                     .ToListAsync();
             }
@@ -417,17 +424,17 @@ namespace Learning5.services.Account
             return list;
         }
 
-        public async Task<List<LeavesModule>> GetLeavesForApproval(string userid)
+        public async Task<List<LeavesListforApproveModel>> GetLeavesForApproval(string userid)
         {
             
-            List<LeavesModule> list = new List<LeavesModule>();
+            List<LeavesListforApproveModel> list = new List<LeavesListforApproveModel>();
             try
             {
                 if (userid != "")
                 {
                     var Rlist = new List<string>();
                     var user = await _db.Users.Where(u => u.UserName == userid)
-                        .Include(u => u.DesignationId)
+                        .Include(u => u.Designations)
                         .FirstOrDefaultAsync();
                     if(user.DesignationId != null && user.DesignationId == "D001")
                     {
@@ -443,13 +450,27 @@ namespace Learning5.services.Account
                     }
 
                     list = await _db.LeavesModules
-                       .Join(_db.Users,
+                       .Join(_db.Users.Include(e => e.Designations),
                        LeavesModules => LeavesModules.UserName,
                        Users => Users.UserName,
                        (LeavesModules, Users) => new { Users, LeavesModules }
                        )
                        .Where(joined => joined.Users.CollegeCode == user.CollegeCode && Rlist.Contains(joined.Users.DesignationId))
-                       .Select(joined => joined.LeavesModules)
+                       .Select(joined =>
+                             new LeavesListforApproveModel
+                            {
+                                 LeaveId = joined.LeavesModules.LeaveId,
+                                 UserName = joined.Users.UserName,
+                                 EmployeeName = joined.Users.EmployeeName,
+                                 Designation = joined.Users.Designations.DesignationName,
+                                 LeaveType = joined.LeavesModules.LeaveType,
+                                 StartDate = joined.LeavesModules.StartDate,
+                                 EndDate = joined.LeavesModules.EndDate,
+                                 TotalDays = joined.LeavesModules.TotalDays,
+                                 Reason = joined.LeavesModules.Reason,
+                                 Status = joined.LeavesModules.Status,
+                                 Remarks = joined.LeavesModules.Remarks
+                            })
                        .ToListAsync();
 
                     return list;
@@ -562,27 +583,39 @@ namespace Learning5.services.Account
             return await _db.Designations.ToListAsync();
         }
 
-        public async Task<Profile> GetProfile(string userId)
+      
+        public async Task<Profile?> GetProfile(string userId)
         {
-            Profile profile = new Profile();
             try
             {
-                var user = await _db.Users.FirstOrDefaultAsync(u => u.UserName == userId);
-                if (user != null)
-                {
-                    profile.FullName = user.EmployeeName;
-                    profile.Email = user.Email;
-                    profile.Mobile = user.PhoneNumber;
-                    profile.Aadhaar = user.AadhaarId;
-                    profile.PAN = user.PanId;
-                    profile.ProfilePhotoUrl = user.Passport_DocumentPath;
-                }
+                return await _db.Users
+                    .AsNoTracking()
+                    .Where(u => u.UserName == userId)
+                    .Select(u => new Profile
+                    {
+                        EmployeeId = u.UserName,
+                        FullName = u.EmployeeName,
+                        Email = u.Email,
+                        Designation = u.Designations.DesignationName,
+                        CollegeCode = _db.Colleges
+                            .Where(c => c.CollegeCode == u.CollegeCode)
+                            .Select(c => c.CollegeName)
+                            .FirstOrDefault(),
+                        Aadhaar = u.AadhaarId,
+                        PAN = u.PanId,
+                        JoiningDate = u.DateOfJoining.HasValue
+                            ? u.DateOfJoining.Value.ToString("yyyy-MM-dd")
+                            : null,
+                        ProfilePhotoUrl = u.Passport_DocumentPath
+                    })
+                    .FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
-                throw;
+                // Log the exception (recommended instead of rethrowing blindly)
+                Console.WriteLine($"Error retrieving profile for user '{userId}': {ex.Message}");
+                return null;
             }
-            return profile;
         }
 
         public async Task<IdCardModel> getIdDetails(string userId)

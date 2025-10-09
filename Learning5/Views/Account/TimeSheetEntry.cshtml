@@ -1,0 +1,90 @@
+﻿@model Learning5.Models.Account.TimeSheet
+
+@{
+    ViewData["Title"] = "Timesheet Entry";
+}
+
+<h2 class="mb-4">Timesheet Entry</h2>
+
+<form asp-action="AddTimeSheetEntry" method="post" class="border p-4 rounded shadow-sm bg-light">
+    <div class="row mb-3">
+        <div class="col-md-4">
+            <label asp-for="Date" class="form-label">Date</label>
+            <input asp-for="Date" class="form-control" type="date" />
+            <span asp-validation-for="Date" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-4">
+            <label asp-for="StartTime" class="form-label">Start Time</label>
+            <input asp-for="StartTime" class="form-control" type="time" id="StartTime" onchange="calculateHours()" />
+        </div>
+
+        <div class="col-md-4">
+            <label asp-for="EndTime" class="form-label">End Time</label>
+            <input asp-for="EndTime" class="form-control" type="time" id="EndTime" onchange="calculateHours()" />
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-md-4">
+            <label asp-for="TotalHours" class="form-label">Total Hours</label>
+            <input asp-for="TotalHours" class="form-control" id="TotalHours" readonly />
+        </div>
+
+        <div class="col-md-4">
+            <label asp-for="ProjectId" class="form-label">Project</label>
+            <select asp-for="ProjectId" class="form-select" asp-items="ViewBag.Projects">
+                <option value="">-- Select Project --</option>
+            </select>
+        </div>
+
+        <div class="col-md-4">
+            <label asp-for="LeaveType" class="form-label">Leave Type</label>
+            <select asp-for="LeaveType" class="form-select">
+                <option value="">-- None --</option>
+                <option>Full Day</option>
+                <option>Half Day</option>
+                <option>Holiday</option>
+                <option>Leave</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="TaskDescription" class="form-label">Task Description</label>
+        <textarea asp-for="TaskDescription" class="form-control" rows="3"></textarea>
+        <span asp-validation-for="TaskDescription" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Comments" class="form-label">Comments</label>
+        <textarea asp-for="Comments" class="form-control" rows="2"></textarea>
+    </div>
+
+    <div class="text-end">
+        <button type="submit" class="btn btn-primary">Save</button>
+        <a asp-action="Index" class="btn btn-secondary ms-2">Cancel</a>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        function calculateHours() {
+            var start = document.getElementById("StartTime").value;
+            var end = document.getElementById("EndTime").value;
+            if (start && end) {
+                var startTime = new Date("1970-01-01T" + start + ":00");
+                var endTime = new Date("1970-01-01T" + end + ":00");
+                var diff = (endTime - startTime) / (1000 * 60 * 60);
+
+                if (diff > 0) {
+                    document.getElementById("TotalHours").value = diff.toFixed(2);
+                } else {
+                    document.getElementById("TotalHours").value = '';
+                }
+            }
+        }
+    </script>
+}

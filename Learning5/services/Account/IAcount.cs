@@ -21,7 +21,7 @@ namespace Learning5.services.Account
 
         Task<string> ApplyLeave(LeavesModule leave);
         Task<List<LeavesModule>> GetLeavesList(string userName);
-        Task<List<LeavesModule>> GetLeavesForApproval(string userid);
+        Task<List<LeavesListforApproveModel>> GetLeavesForApproval(string userid);
         Task<string> CancelLeave(string leaveId);
         Task<List<SelectListItem>> GetDesignationsForDropdown();
         Task<string> ApproveLeave(string leaveId, string userId, string remarks, string flag);
