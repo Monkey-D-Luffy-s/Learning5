@@ -13,6 +13,7 @@ namespace Learning5.data
 
         public DbSet<User> Users { get; set; }
 
+        public DbSet<Holiday> Holidays { get; set; }
         public DbSet<Roles> UserRoles { get; set; }
 
         public DbSet<TimeSheet> TimeSheets { get; set; }

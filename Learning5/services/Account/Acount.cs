@@ -1,5 +1,6 @@
 ﻿using Learning5.data;
 using Learning5.Models.Account;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -33,7 +34,7 @@ namespace Learning5.services.Account
                 if (!string.IsNullOrEmpty(user.UserName))
                 {
                     var obj = await _db.Users.Where(u => u.UserName == user.UserName).Include(u => u.Designations).FirstOrDefaultAsync();
-                    if(obj != null)
+                    if (obj != null)
                     {
                         obj.EmployeeName = user.EmployeeName;
                         obj.DepartmentId = user.DepartmentId;
@@ -54,7 +55,7 @@ namespace Learning5.services.Account
                         if (result > 0)
                         {
                             return "User Updated successfully.";
-                            
+
                         }
                         else
                         {
@@ -77,7 +78,7 @@ namespace Learning5.services.Account
                         ? "User created successfully."
                         : "Error creating user: " + string.Join(", ", result.Errors.Select(e => e.Description));
                 }
-                   
+
             }
             catch (Exception ex)
             {
@@ -89,7 +90,7 @@ namespace Learning5.services.Account
             try
             {
                 var user = await _db.Users.FirstOrDefaultAsync(u => u.UserName == userid);
-                if (user != null) 
+                if (user != null)
                 {
                     user.IsActive = false;
                     await _db.SaveChangesAsync();
@@ -131,7 +132,7 @@ namespace Learning5.services.Account
             }
             catch (Exception ex)
             {
-                throw;
+                throw ex;
             }
             return list;
         }
@@ -265,7 +266,7 @@ namespace Learning5.services.Account
         }
         public async Task<List<SelectListItem>> GetEmployeesForDropdown()
         {
-            var roles = await _userManager.Users.Where(u=> u.IsActive == true).ToListAsync();
+            var roles = await _userManager.Users.Where(u => u.IsActive == true).ToListAsync();
             var roleSelectList = roles.Select(r => new SelectListItem
             {
                 Text = r.UserName + "-" + r.EmployeeName,
@@ -308,7 +309,7 @@ namespace Learning5.services.Account
                         case "Earned Leave":
                             user.AvailedEarnedLeaves += leave.TotalDays;
                             break;
-                        default :
+                        default:
                             break;
                     }
                     await _db.SaveChangesAsync();
@@ -396,7 +397,7 @@ namespace Learning5.services.Account
             try
             {
                 var u = await _db.Users.FirstOrDefaultAsync(u => u.UserName == userId);
-                if (u != null) 
+                if (u != null)
                 {
                     list = new LaeveBalances
                     {
@@ -414,8 +415,8 @@ namespace Learning5.services.Account
                         EarnedAvailed = u.AvailedEarnedLeaves.ToString(),
                     };
                 }
-                
-                   
+
+
             }
             catch (Exception ex)
             {
@@ -426,7 +427,7 @@ namespace Learning5.services.Account
 
         public async Task<List<LeavesListforApproveModel>> GetLeavesForApproval(string userid)
         {
-            
+
             List<LeavesListforApproveModel> list = new List<LeavesListforApproveModel>();
             try
             {
@@ -436,15 +437,17 @@ namespace Learning5.services.Account
                     var user = await _db.Users.Where(u => u.UserName == userid)
                         .Include(u => u.Designations)
                         .FirstOrDefaultAsync();
-                    if(user.DesignationId != null && user.DesignationId == "D001")
+                    if (user.DesignationId != null && user.DesignationId == "D001")
                     {
                         Rlist.Add("D002");
                         Rlist.Add("D003");
                         Rlist.Add("D005");
-                    }else if (user.DesignationId != null && user.DesignationId == "D004")
+                    }
+                    else if (user.DesignationId != null && user.DesignationId == "D004")
                     {
-                        Rlist = new List<string> { "D001"};
-                    }else if (user.DesignationId != null && user.DesignationId == "D006")
+                        Rlist = new List<string> { "D001" };
+                    }
+                    else if (user.DesignationId != null && user.DesignationId == "D006")
                     {
                         Rlist = new List<string> { "D001", "D004" };
                     }
@@ -458,7 +461,7 @@ namespace Learning5.services.Account
                        .Where(joined => joined.Users.CollegeCode == user.CollegeCode && Rlist.Contains(joined.Users.DesignationId))
                        .Select(joined =>
                              new LeavesListforApproveModel
-                            {
+                             {
                                  LeaveId = joined.LeavesModules.LeaveId,
                                  UserName = joined.Users.UserName,
                                  EmployeeName = joined.Users.EmployeeName,
@@ -470,7 +473,7 @@ namespace Learning5.services.Account
                                  Reason = joined.LeavesModules.Reason,
                                  Status = joined.LeavesModules.Status,
                                  Remarks = joined.LeavesModules.Remarks
-                            })
+                             })
                        .ToListAsync();
 
                     return list;
@@ -485,17 +488,18 @@ namespace Learning5.services.Account
             {
                 return list;
             }
-           
+
         }
-        public async Task<string> ApproveLeave(string leaveId, string userId,string remarks,string flag)
+        public async Task<string> ApproveLeave(string leaveId, string userId, string remarks, string flag)
         {
             try
             {
                 var leave = await _db.LeavesModules.FirstOrDefaultAsync(l => l.LeaveId == leaveId);
                 if (leave != null)
-                {   leave.Remarks = remarks;
-                    
-                    if(flag == "R")
+                {
+                    leave.Remarks = remarks;
+
+                    if (flag == "R")
                     {
                         leave.Status = "Rejected";
                         if (!string.IsNullOrEmpty(leave.UserName))
@@ -548,7 +552,7 @@ namespace Learning5.services.Account
             try
             {
                 var count = await _db.Colleges.CountAsync();
-                clg.CollegeCode = count < 1 ? "clg001" : "clg"+(count+1).ToString("D3");
+                clg.CollegeCode = count < 1 ? "clg001" : "clg" + (count + 1).ToString("D3");
                 _db.Colleges.Add(clg);
                 await _db.SaveChangesAsync();
                 return "College Added Successfully.";
@@ -563,7 +567,7 @@ namespace Learning5.services.Account
             try
             {
                 var count = await _db.Designations.CountAsync();
-                clg.DesignationId = count < 1 ? "D001" : "D"+(count+1).ToString("D3");
+                clg.DesignationId = count < 1 ? "D001" : "D" + (count + 1).ToString("D3");
                 _db.Designations.Add(clg);
                 await _db.SaveChangesAsync();
                 return "Designation Added Successfully.";
@@ -583,7 +587,7 @@ namespace Learning5.services.Account
             return await _db.Designations.ToListAsync();
         }
 
-      
+
         public async Task<Profile?> GetProfile(string userId)
         {
             try
@@ -654,6 +658,94 @@ namespace Learning5.services.Account
             }
             return user;
         }
+
+        public async Task<string> FillTimeSheet(TimeSheet timesheet)
+        {
+            try
+            {
+                var count = await _db.TimeSheets.CountAsync();
+                timesheet.TimesheetId = count < 1 ? "TS_00001" : "TS_" + (count + 1).ToString("D5");
+                _db.TimeSheets.Add(timesheet);
+                await _db.SaveChangesAsync();
+                return "TimeSheet Added Successfully.";
+            }
+            catch (Exception ex)
+            {
+                return ex.Message.ToString();
+            }
+        }
+        public async Task<List<string>> GetListofTimeshetFilled(string userid)
+        {
+
+            var list = new List<DateTime>();
+            list  = await _db.TimeSheets
+                .Where(u => u.UserId == userid)
+                .Select(e => e.Date.Date)
+                .ToListAsync();
+
+            List<string> formattedDates = list.Select(d => d.ToString("yyyy-MM-dd")).ToList();
+
+            await _db.SaveChangesAsync();
+            return formattedDates;
+           
+        }
+
+        public async Task<JsonResult> GetHolidays(int? year, int? month)
+        {
+            var query = _db.Holidays.AsQueryable();
+            if (year.HasValue)
+            {
+                query = query.Where(h => h.Date.Year == year.Value);
+            }
+            if (month.HasValue)
+            {
+                query = query.Where(h => h.Date.Month == month.Value);
+            }
+            var holidays = await query
+                .Select(h => new
+                {
+                    Date = h.Date.ToString("yyyy-MM-dd"),
+                    h.Name
+                })
+                .ToListAsync();
+
+            return new JsonResult(holidays);
+        }
+        public async Task<JsonResult> GetHolidaysList()
+        {
+            var query = _db.Holidays.AsQueryable();
+            
+            var holidays = await query
+                .Select(h => new
+                {
+                    Date = h.Date.ToString("yyyy-MM-dd"),
+                    h.Name
+                })
+                .ToListAsync();
+
+            return new JsonResult(holidays);
+        }
+
+        public async Task<string> AddHoliday(string date, string name)
+        {
+
+            try
+            {
+                var holiday = new Holiday
+                {
+                    Date = DateTime.ParseExact(date, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture),
+                    Name = name
+                };
+                _db.Holidays.Add(holiday);
+                await _db.SaveChangesAsync();
+                return "Holiday Added Successfully.";
+            }
+            catch (Exception ex)
+            {
+                return ex.Message.ToString();
+            }
+        }
+
     }
 }
 

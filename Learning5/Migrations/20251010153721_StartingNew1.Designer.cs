@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Learning5.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251004180739_initialMigration1")]
-    partial class initialMigration1
+    [Migration("20251010153721_StartingNew1")]
+    partial class StartingNew1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -53,12 +53,23 @@ namespace Learning5.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("UserName")
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("CollegeCode");
 
                     b.ToTable("Colleges");
+                });
+
+            modelBuilder.Entity("Learning5.Models.Account.Designations", b =>
+                {
+                    b.Property<string>("DesignationId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("DesignationName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("DesignationId");
+
+                    b.ToTable("Designations");
                 });
 
             modelBuilder.Entity("Learning5.Models.Account.LeavesModule", b =>
@@ -96,11 +107,51 @@ namespace Learning5.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("UserName")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
                     b.HasKey("LeaveId");
 
                     b.ToTable("LeavesModules");
+                });
+
+            modelBuilder.Entity("Learning5.Models.Account.TimeSheet", b =>
+                {
+                    b.Property<string>("TimesheetId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ApprovedBy")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Comments")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<decimal>("TotalHours")
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("TimesheetId");
+
+                    b.ToTable("TimeSheets");
                 });
 
             modelBuilder.Entity("Learning5.Models.Account.User", b =>
@@ -136,6 +187,9 @@ namespace Learning5.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("CollegeCode")
+                        .HasColumnType("nvarchar(256)");
+
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
@@ -155,6 +209,9 @@ namespace Learning5.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("DesignationId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
@@ -168,9 +225,6 @@ namespace Learning5.Migrations
 
                     b.Property<bool?>("IsActive")
                         .HasColumnType("bit");
-
-                    b.Property<string>("LeaveId")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
@@ -229,6 +283,10 @@ namespace Learning5.Migrations
                         .HasColumnType("nvarchar(256)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CollegeCode");
+
+                    b.HasIndex("DesignationId");
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -392,7 +450,6 @@ namespace Learning5.Migrations
                     b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityRole");
 
                     b.Property<string>("RoleId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("RoleName")
@@ -402,20 +459,19 @@ namespace Learning5.Migrations
                     b.HasDiscriminator().HasValue("Roles");
                 });
 
-            modelBuilder.Entity("Learning5.Models.Account.LeavesModule", b =>
-                {
-                    b.HasOne("Learning5.Models.Account.User", null)
-                        .WithMany("LeavesModule")
-                        .HasForeignKey("LeaveId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Learning5.Models.Account.User", b =>
                 {
-                    b.HasOne("Learning5.Models.Account.Colleges", null)
-                        .WithMany("Users")
-                        .HasForeignKey("UserName");
+                    b.HasOne("Learning5.Models.Account.Colleges", "Colleges")
+                        .WithMany()
+                        .HasForeignKey("CollegeCode");
+
+                    b.HasOne("Learning5.Models.Account.Designations", "Designations")
+                        .WithMany()
+                        .HasForeignKey("DesignationId");
+
+                    b.Navigation("Colleges");
+
+                    b.Navigation("Designations");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -467,16 +523,6 @@ namespace Learning5.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("Learning5.Models.Account.Colleges", b =>
-                {
-                    b.Navigation("Users");
-                });
-
-            modelBuilder.Entity("Learning5.Models.Account.User", b =>
-                {
-                    b.Navigation("LeavesModule");
                 });
 #pragma warning restore 612, 618
         }

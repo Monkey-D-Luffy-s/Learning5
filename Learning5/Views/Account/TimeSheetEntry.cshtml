@@ -4,87 +4,199 @@
     ViewData["Title"] = "Timesheet Entry";
 }
 
-<h2 class="mb-4">Timesheet Entry</h2>
+<h2 class="mb-4 text-center">Timesheet Entry</h2>
 
-<form asp-action="AddTimeSheetEntry" method="post" class="border p-4 rounded shadow-sm bg-light">
-    <div class="row mb-3">
-        <div class="col-md-4">
-            <label asp-for="Date" class="form-label">Date</label>
-            <input asp-for="Date" class="form-control" type="date" />
-            <span asp-validation-for="Date" class="text-danger"></span>
-        </div>
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.css" rel="stylesheet" />
+<style>
+    /* Calendar cell shadows */
+    .fc-daygrid-day {
+        border: 1px solid #ddd;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    }
 
-        <div class="col-md-4">
-            <label asp-for="StartTime" class="form-label">Start Time</label>
-            <input asp-for="StartTime" class="form-control" type="time" id="StartTime" onchange="calculateHours()" />
-        </div>
+    .modal-backdrop {
+        background-color: rgb(0, 0, 0) !important; /* Solid black background */
+        opacity: 1 !important; /* Remove transparency */
+    }
 
-        <div class="col-md-4">
-            <label asp-for="EndTime" class="form-label">End Time</label>
-            <input asp-for="EndTime" class="form-control" type="time" id="EndTime" onchange="calculateHours()" />
-        </div>
-    </div>
+    .fc-event.submitted {
+        border: 1px solid #28a745;
+        box-shadow: 0 0 5px rgba(40, 167, 69, 0.5);
+    }
 
-    <div class="row mb-3">
-        <div class="col-md-4">
-            <label asp-for="TotalHours" class="form-label">Total Hours</label>
-            <input asp-for="TotalHours" class="form-control" id="TotalHours" readonly />
-        </div>
+    .fc-event.holiday {
+        border: 1px solid #6c757d;
+        box-shadow: 0 0 5px rgba(108, 117, 125, 0.5);
+    }
 
-        <div class="col-md-4">
-            <label asp-for="ProjectId" class="form-label">Project</label>
-            <select asp-for="ProjectId" class="form-select" asp-items="ViewBag.Projects">
-                <option value="">-- Select Project --</option>
-            </select>
-        </div>
+    .sbar {
+        background-color: #11f3f3 !important;
+        height: 3px;
+        box-shadow: 3px 0px 8px 3px #11f3f3;
+    }
+    /* Modal shadow */
+    .modal-content {
+        border:none;
+        background-color: inherit;
+        color: #38f8f8;
+        border-radius:inherit;
+    }
 
-        <div class="col-md-4">
-            <label asp-for="LeaveType" class="form-label">Leave Type</label>
-            <select asp-for="LeaveType" class="form-select">
-                <option value="">-- None --</option>
-                <option>Full Day</option>
-                <option>Half Day</option>
-                <option>Holiday</option>
-                <option>Leave</option>
-            </select>
-        </div>
-    </div>
+ 
 
-    <div class="mb-3">
-        <label asp-for="TaskDescription" class="form-label">Task Description</label>
-        <textarea asp-for="TaskDescription" class="form-control" rows="3"></textarea>
-        <span asp-validation-for="TaskDescription" class="text-danger"></span>
-    </div>
+    .inputclg :focus-visible{
+        background-color: inherit;
+        color: #38f8f8;
+        border:none;
+        outline:none;
+        border-bottom: 1px solid white;
+    }
 
-    <div class="mb-3">
-        <label asp-for="Comments" class="form-label">Comments</label>
-        <textarea asp-for="Comments" class="form-control" rows="2"></textarea>
-    </div>
+    /* Input shadow */
+    #workingHours, #selectedDate {
+        border: 1px solid #ced4da;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        transition: box-shadow 0.3s ease;
+    }
 
-    <div class="text-end">
-        <button type="submit" class="btn btn-primary">Save</button>
-        <a asp-action="Index" class="btn btn-secondary ms-2">Cancel</a>
-    </div>
-</form>
-
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-
-    <script>
-        function calculateHours() {
-            var start = document.getElementById("StartTime").value;
-            var end = document.getElementById("EndTime").value;
-            if (start && end) {
-                var startTime = new Date("1970-01-01T" + start + ":00");
-                var endTime = new Date("1970-01-01T" + end + ":00");
-                var diff = (endTime - startTime) / (1000 * 60 * 60);
-
-                if (diff > 0) {
-                    document.getElementById("TotalHours").value = diff.toFixed(2);
-                } else {
-                    document.getElementById("TotalHours").value = '';
-                }
-            }
+        #workingHours:focus, #selectedDate:focus {
+            box-shadow: 0 0 8px rgba(0, 123, 255, 0.5);
+            border-color: #007bff;
         }
-    </script>
-}
+</style>
+<script src="~/lib/fullcalendar/index.global.min.js"></script>
+
+<div id="calendar"></div>
+
+<div class="modal fade" id="timesheetModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+                <p class="sbar"></p>
+              
+            <div class="modal-header">
+                <h5 class="modal-title">Enter Working Hours</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="timesheetForm">
+                    <input type="hidden" id="selectedDate" />
+                    <div class="mb-3">
+                        <label>Working Hours</label>
+                        <input type="number" class="form-control inputclg" id="workingHours" min="1" max="12" />
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+            <p class="sbar"></p>
+        </div>
+    </div>
+</div>
+
+<script>
+       document.addEventListener('DOMContentLoaded', function () {
+        var calendarEl = document.getElementById('calendar');
+        var publicHolidays = ["2025-10-15", "2025-10-18"];
+        var today = new Date().toISOString().split('T')[0];
+
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            selectable: true,
+            height: "auto",
+            dateClick: function (info) {
+                let clickedDate = info.dateStr;
+
+                if (clickedDate > today) return;
+                if (calendar.getEvents().some(e => e.startStr === clickedDate && e.title === 'Submitted')) return;
+                if (publicHolidays.includes(clickedDate)) return;
+
+                document.getElementById("selectedDate").value = clickedDate;
+                var myModal = new bootstrap.Modal(document.getElementById('timesheetModal'));
+                myModal.show();
+            },
+            events: publicHolidays.map(d => ({ title: 'Holiday', start: d, color: 'gray', display: 'background' }))
+            
+        });
+
+        calendar.render();
+
+        $.ajax({
+            url: '@Url.Action("GetListofTimeshetFilled", "Account")',
+            type: 'GET',
+            data: '',
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                if (Array.isArray(response)) {
+                    response.forEach(date => {
+                        calendar.addEvent({
+                            title: 'Submitted',
+                            start: date,
+                            classNames: ['submitted'],
+                            color: 'green',
+                            display: 'background'
+                        });
+                    });
+                } else {
+                    console.error("Invalid response format for submittedDates:", response);
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error("Error fetching timesheet data:", error);
+            }
+        });
+        $.ajax({
+            url: '@Url.Action("GetHolidays", "Account")',
+            type: 'GET',
+            data: { year: new Date().getFullYear() },
+            success: function (response) {
+                if (Array.isArray(response)) {
+                    response.forEach(holiday => {
+                        calendar.addEvent({
+                            title: holiday.name,
+                            start: holiday.date,
+                            classNames: ['holiday'],
+                            color: 'gray',
+                            display: 'background'
+                        });
+                    });
+                } else {
+                    console.error("Invalid response format for holidays:", response);
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error("Error fetching holidays:", error);
+            }
+        });
+        document.getElementById("timesheetForm").addEventListener("submit", function (e) {
+            e.preventDefault();
+            var date = document.getElementById("selectedDate").value;
+            var hours = document.getElementById("workingHours").value;
+            var formdata = new FormData();
+            formdata.append("date", date);
+            formdata.append("hours", hours);
+
+            $.ajax({
+                url: '@Url.Action("AddTimeSheetEntry", "Account")',
+                type: 'POST',
+                data: formdata,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    calendar.addEvent({
+                        title: 'Submitted',
+                        start: date,
+                         classNames: ['submitted'],
+                        color: 'green',
+                        display: 'background'
+                    });
+                    var myModalEl = document.getElementById('timesheetModal');
+                    var modal = bootstrap.Modal.getInstance(myModalEl);
+                    modal.hide();
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error submitting timesheet:", error);
+                }
+            });
+        });
+    });
+</script>

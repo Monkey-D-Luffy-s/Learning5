@@ -17,6 +17,10 @@
     {
       "library": "datatables.net-dt@2.3.4",
       "destination": "wwwroot/lib/datatables.net-dt/"
+    },
+    {
+      "library": "fullcalendar@6.1.19",
+      "destination": "wwwroot/lib/fullcalendar/"
     }
   ]
 }

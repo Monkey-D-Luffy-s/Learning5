@@ -1,4 +1,5 @@
 ﻿using Learning5.Models.Account;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Collections;
 
@@ -34,5 +35,13 @@ namespace Learning5.services.Account
         Task<User> GetUserDetails(string UserName);
         Task<string> AddDesignation(Designations clg);
         Task<List<Designations>> GetDesignationsList();
+
+        Task<string> FillTimeSheet(TimeSheet timesheet);
+
+        Task<List<string>> GetListofTimeshetFilled(string userid);
+
+        Task<JsonResult> GetHolidays(int? year, int? month);
+        Task<JsonResult> GetHolidaysList();
+        Task<string> AddHoliday(string date, string name);
     }
 }

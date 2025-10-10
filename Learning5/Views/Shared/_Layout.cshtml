@@ -83,6 +83,9 @@
                                     </li>
                                     <li><hr class="dropdown-divider"></li>
                                     <li class="nav-item">
+                                        <a class="nav-link" asp-area="" asp-controller="Account" asp-action="TimeSheetEntry">Timesheet</a>
+                                    </li>
+                                    <li class="nav-item">
                                         <a class="nav-link" asp-area="" asp-controller="Account" asp-action="IdCard">Id Card</a>
                                     </li>
                                     @if (User.IsInRole("Principal") || User.IsInRole("DIEO") || User.IsInRole("RJD"))
@@ -129,6 +132,9 @@
                                     
                                     <li class="nav-item">
                                         <a class="nav-link" asp-area="" asp-controller="Account" asp-action="AddRole">Add Role</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" asp-area="" asp-controller="Account" asp-action="AddHoliday">Add Holiday</a>
                                     </li>
                                     <li><hr class="dropdown-divider"></li>
                                     <li class="nav-item">

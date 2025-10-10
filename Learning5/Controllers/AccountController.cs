@@ -597,18 +597,122 @@ namespace Learning5.Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> AddTimeSheetEntry(TimeSheet timesheetData)
+        public async Task<IActionResult> AddTimeSheetEntry(string date, string hours)
+        {
+            try
+            {
+                string username = User.Identity.Name;
+                if (string.IsNullOrEmpty(username))
+                {
+                    return RedirectToAction("Login");
+                }
+                else
+                {
+                    TimeSheet obj = new TimeSheet();
+                    obj.UserId = username;
+                    obj.Date = Convert.ToDateTime(date);
+                    obj.TotalHours = Convert.ToDecimal(hours);
+                    string result  = await _account.FillTimeSheet(obj);
+                    if (result.ToString().Contains("Successfully"))
+                    {
+                        TempData["SuccessMessage"] = result.ToString();
+                        _logger.LogInformation($"Timesheet data submitted by {username} at {DateTime.Now}: {date}");
+                        return RedirectToAction("TimeSheetEntry");
+                    }
+                    else
+                    {
+                        TempData["ErrorMessage"] = result.ToString();
+                        return RedirectToAction("TimeSheetEntry");
+                    }
+                }
+
+                
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message.ToString();
+                return RedirectToAction("TimeSheetEntry");
+            }
+
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<JsonResult> GetListofTimeshetFilled()
+        {
+            string userid = User.Identity.Name;
+            if (string.IsNullOrEmpty(userid))
+            {
+                return Json(new List<string>());
+            }
+            else
+            {
+                return Json(await _account.GetListofTimeshetFilled(userid));
+            }
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<JsonResult> GetHolidays(int? year, int? month)
+        {
+            string userid = User.Identity.Name;
+            if (string.IsNullOrEmpty(userid))
+            {
+                return Json(new List<string>());
+            }
+            else
+            {
+                return await _account.GetHolidays(year, month);
+            }
+        }
+        [Authorize]
+        [HttpGet]
+        public async Task<JsonResult> GetHolidaysList()
+        {
+            return Json(await _account.GetHolidaysList());
+        }
+        [Authorize]
+        public IActionResult AddHoliday()
         {
             string username = User.Identity.Name;
             if (string.IsNullOrEmpty(username))
             {
                 return RedirectToAction("Login");
             }
-            _logger.LogInformation($"Timesheet data submitted by {username} at {DateTime.Now}: {timesheetData}");
-            timesheetData.UserId = username;
-            TempData["SuccessMessage"] = "Timesheet submitted successfully!";
-            return RedirectToAction("TimeSheetEntry");
+            return View();
+        }
 
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> AddHoliday(string date, string name)
+        {
+            try
+            {
+                if(string.IsNullOrEmpty(date) || string.IsNullOrEmpty(date))
+                {
+                    TempData["ErrorMessage"] = "Date and Name are required.";
+                    return RedirectToAction("AddHoliday");
+                }
+                else
+                {
+                    var result = await _account.AddHoliday(date, name);
+                    if (result.ToString().Contains("Successfully"))
+                    {
+                        TempData["SuccessMessage"] = result.ToString();
+                        return RedirectToAction("AddHoliday");
+                    }
+                    else
+                    {
+                        TempData["ErrorMessage"] = result.ToString();
+                        return RedirectToAction("AddHoliday");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message.ToString();
+                return RedirectToAction("AddHoliday");
+            }
         }
     }
 }

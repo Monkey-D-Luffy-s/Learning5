@@ -69,6 +69,23 @@ namespace Learning5.Migrations
                     b.ToTable("Designations");
                 });
 
+            modelBuilder.Entity("Learning5.Models.Account.Holiday", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Holidays");
+                });
+
             modelBuilder.Entity("Learning5.Models.Account.LeavesModule", b =>
                 {
                     b.Property<string>("LeaveId")
@@ -110,6 +127,45 @@ namespace Learning5.Migrations
                     b.HasKey("LeaveId");
 
                     b.ToTable("LeavesModules");
+                });
+
+            modelBuilder.Entity("Learning5.Models.Account.TimeSheet", b =>
+                {
+                    b.Property<string>("TimesheetId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ApprovedBy")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Comments")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<decimal>("TotalHours")
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("TimesheetId");
+
+                    b.ToTable("TimeSheets");
                 });
 
             modelBuilder.Entity("Learning5.Models.Account.User", b =>
@@ -408,7 +464,6 @@ namespace Learning5.Migrations
                     b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityRole");
 
                     b.Property<string>("RoleId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("RoleName")
