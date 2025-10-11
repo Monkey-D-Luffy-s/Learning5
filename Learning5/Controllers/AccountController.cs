@@ -192,7 +192,7 @@ namespace Learning5.Controllers
         public async Task<IActionResult> AssignRole()
         {
             ViewBag.Roles = await _account.GetRolesForDropdown();
-            ViewBag.Employees = await _account.GetEmployeesForDropdown();
+            ViewBag.Employees = await _account.GetEmployeesForAdminDropdown();
             return View();
         }
         [Authorize(Roles = "Admin")]
@@ -612,7 +612,7 @@ namespace Learning5.Controllers
                     obj.UserId = username;
                     obj.Date = Convert.ToDateTime(date);
                     obj.TotalHours = Convert.ToDecimal(hours);
-                    string result  = await _account.FillTimeSheet(obj);
+                    string result = await _account.FillTimeSheet(obj);
                     if (result.ToString().Contains("Successfully"))
                     {
                         TempData["SuccessMessage"] = result.ToString();
@@ -626,7 +626,7 @@ namespace Learning5.Controllers
                     }
                 }
 
-                
+
             }
             catch (Exception ex)
             {
@@ -688,7 +688,7 @@ namespace Learning5.Controllers
         {
             try
             {
-                if(string.IsNullOrEmpty(date) || string.IsNullOrEmpty(date))
+                if (string.IsNullOrEmpty(date) || string.IsNullOrEmpty(date))
                 {
                     TempData["ErrorMessage"] = "Date and Name are required.";
                     return RedirectToAction("AddHoliday");
@@ -713,6 +713,51 @@ namespace Learning5.Controllers
                 TempData["ErrorMessage"] = ex.Message.ToString();
                 return RedirectToAction("AddHoliday");
             }
+        }
+
+        [Authorize]
+        public async Task<IActionResult> ApproveTimeSheet()
+        {
+            string username = User.Identity.Name;
+            if (string.IsNullOrEmpty(username))
+            {
+                return RedirectToAction("Login");
+            }
+            else
+            {
+                ViewBag.Employees = await _account.GetEmployeesForUsersDropdown(username);
+            }
+            return View();
+        }
+
+        [Authorize(Roles = "Principal,DIEO,RJD")]
+        [HttpGet]
+        public async Task<JsonResult> GetEmployeeTimeSheets(string employeeId)
+        {
+            return await _account.GetEmployeeTimeSheets(employeeId);
+        }
+
+        [Authorize(Roles = "Principal,DIEO,RJD")]
+        [HttpPost]
+        public async Task<JsonResult> ApproveTimesheet(string timesheetId)
+        {
+            try
+            {
+                var result = await _account.ApproveTimesheet(timesheetId);
+                if (result.ToString().Contains("Successfully"))
+                {
+                    TempData["SuccessMessage"] = result.ToString();
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = result.ToString();
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message.ToString();
+            }
+            return Json("1");
         }
     }
 }

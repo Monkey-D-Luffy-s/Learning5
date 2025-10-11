@@ -1,0 +1,221 @@
+﻿@model Learning5.Models.Account.TimeSheet
+
+@{
+    ViewData["Title"] = "Timesheet Approvals";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/datatables.net/datatables.min.js"></script>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+<style>
+    /* Calendar cell shadows */
+    .fc-daygrid-day {
+        border: 1px solid #ddd;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    }
+
+    .modelbutton{
+        padding: 8px 18px;
+        outline:none;
+        background-color:inherit;
+        color: #11f3f3;
+        border-color: #11f3f3;
+
+    }
+    .modal-backdrop {
+        background-color: rgb(0, 0, 0) !important; /* Solid black background */
+        opacity: 1 !important; /* Remove transparency */
+    }
+
+    .fc-event.submitted {
+        border: 1px solid #28a745;
+        box-shadow: 0 0 5px rgba(40, 167, 69, 0.5);
+    }
+
+    .fc-event.holiday {
+        border: 1px solid #6c757d;
+        box-shadow: 0 0 5px rgba(108, 117, 125, 0.5);
+    }
+
+    .sbar {
+        background-color: #11f3f3 !important;
+        height: 3px;
+        box-shadow: 3px 0px 8px 3px #11f3f3;
+    }
+    /* Modal shadow */
+    .modal-content {
+        border: none;
+        background-color: inherit;
+        color: #38f8f8;
+        border-radius: inherit;
+    }
+
+
+
+    .inputclg :focus-visible {
+        background-color: inherit;
+        color: #38f8f8;
+        border: none;
+        outline: none;
+        border-bottom: 1px solid white;
+    }
+
+    /* Input shadow */
+    #workingHours, #selectedDate {
+        border: 1px solid #ced4da;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        transition: box-shadow 0.3s ease;
+    }
+
+        #workingHours:focus, #selectedDate:focus {
+            box-shadow: 0 0 8px rgba(0, 123, 255, 0.5);
+            border-color: #007bff;
+        }
+</style>
+<div class="container">
+    <div class="card bg-black p-5 rounded-2">
+        <h3 class="text-center">TimeSheet Approvals</h3>
+        <div class="row">
+            <div class="row">
+                <div class="col-md-4 my-2 ">
+                    <label for="EmployeeID">Select Time</label>
+                    <select id="EmployeeID" name="EmployeeID" class="form-control" asp-items="ViewBag.Employees">
+                        <option value="">-- Select Employee --</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="row my-4">
+            <table id="tblTimesheet" class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>S.No</th>
+                        <th>TimesheetID</th>
+                        <th>Date</th>
+                        <th>Total Hours</th>
+                        <th>Submitted</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                   
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="timesheetModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <p class="sbar"></p>
+
+            <div class="modal-header">
+                <h5 class="modal-title">Are You Sure?</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+              
+                    <input type="hidden" id="hdTimehsheetId" />
+                    <div class="mb-4 d-flex">
+                        <label>Working Hours:  </label><p id="workingHours"></p>
+                       
+                    </div>
+                <button type="button" onclick="return ApprovingDay()" class="modelbutton">Approve</button>
+               
+            </div>
+            <p class="sbar"></p>
+        </div>
+    </div>
+</div>
+
+<script>
+    var jq = jQuery.noConflict();
+    jq(document).ready(function () {
+        jq('#EmployeeID').change(function () {
+            var employeeId = jq(this).val();
+            if (employeeId) {
+                loadLeaveBalances(employeeId);
+            } else {
+                jq('#tblLeaves tbody').empty();
+            }
+        });
+        function loadLeaveBalances(employeeId) {
+            jq.ajax({
+                url: '/Account/GetEmployeeTimeSheets',
+                type: 'GET',
+                data: { employeeId: employeeId },
+                success: function (data) {
+
+                       if ($.fn.DataTable.isDataTable('#tblTimesheet')) {
+                            $('#tblTimesheet').DataTable().clear().destroy();
+                        }
+
+                        // Log data to verify structure
+                        console.log('Data:', data);
+
+                        // Initialize DataTable
+                        var table = $('#tblTimesheet').DataTable({
+                            data: data, // Ensure this is an array of objects
+                            columns: [
+                                { data: '', render: function(data, type, row, meta){return meta.row + 1;}},
+                                { data: 'timesheetId', title: 'Timesheet ID' },
+                                { data: 'date', title: 'Date' },
+                                { data: 'totalHours', title: 'Total Hours' },
+                                { data: 'status', title: 'Status' },
+                                {
+                                    data: null,
+                                    title: 'Actions',
+                                    render: function (data, type, row) {
+                                        var isDisabled = row.status === 'Approved' ? 'disabled' : '';
+                                        var timesheetId = row.timesheetId || ''; // Fallback for undefined
+                                        return `<button class="btn btn-success px-4 py-1"
+                                                onclick="return ApproveTimesheet('${timesheetId}','${row.totalHours}')"
+                                                ${isDisabled}>Approve</button>`;
+                                    }
+                                }
+                            ],
+                            paging: true,
+                            searching: true,
+                            ordering: true,
+                            info: true
+                        });
+                   
+                },
+                error: function (xhr) {
+                    console.error('Error fetching leave balances:', xhr);
+                }
+            });
+        }
+
+       
+    });
+
+    function ApproveTimesheet(timesheetId,hours) {
+        document.getElementById('workingHours').innerText = hours;
+        document.getElementById('hdTimehsheetId').value = timesheetId;
+        var myModal = new bootstrap.Modal(document.getElementById('timesheetModal'));
+        myModal.show();
+           
+       
+    }
+
+    function ApprovingDay(){
+        var timesheetId = document.getElementById('hdTimehsheetId').value;
+         jq.ajax({
+                url: '/Account/ApproveTimesheet',
+                type: 'POST',
+                data: { timesheetId: timesheetId },
+                success: function (response) {
+                   
+                    var myModal = new bootstrap.Modal(document.getElementById('timesheetModal'));
+
+                    myModal.hide();
+                    location.reload();
+                },
+                error: function (xhr) {
+                    console.error('Error approving timesheet:', xhr);
+                    alert('Failed to approve timesheet. Please try again.');
+                }
+         });
+    }
+</script>

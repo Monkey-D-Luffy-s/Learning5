@@ -18,8 +18,8 @@ namespace Learning5.services.Account
         Task<List<Roles>> GetRoles();
         Task<List<SelectListItem>> GetRolesForDropdown();
         Task<List<SelectListItem>> GetCollegesForDropdown();
-        Task<List<SelectListItem>> GetEmployeesForDropdown();
-
+        Task<List<SelectListItem>> GetEmployeesForUsersDropdown(string username);
+        Task<List<SelectListItem>> GetEmployeesForAdminDropdown();
         Task<string> ApplyLeave(LeavesModule leave);
         Task<List<LeavesModule>> GetLeavesList(string userName);
         Task<List<LeavesListforApproveModel>> GetLeavesForApproval(string userid);
@@ -43,5 +43,9 @@ namespace Learning5.services.Account
         Task<JsonResult> GetHolidays(int? year, int? month);
         Task<JsonResult> GetHolidaysList();
         Task<string> AddHoliday(string date, string name);
+
+        Task<JsonResult> GetEmployeeTimeSheets(string userid);
+
+        Task<string> ApproveTimesheet(string timesheetId);
     }
 }

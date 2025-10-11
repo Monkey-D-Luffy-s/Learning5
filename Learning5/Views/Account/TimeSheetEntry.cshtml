@@ -104,11 +104,9 @@
             height: "auto",
             dateClick: function (info) {
                 let clickedDate = info.dateStr;
-
                 if (clickedDate > today) return;
                 if (calendar.getEvents().some(e => e.startStr === clickedDate && e.title === 'Submitted')) return;
                 if (publicHolidays.includes(clickedDate)) return;
-
                 document.getElementById("selectedDate").value = clickedDate;
                 var myModal = new bootstrap.Modal(document.getElementById('timesheetModal'));
                 myModal.show();

@@ -25,7 +25,6 @@ namespace Learning5.data
         {
             base.OnModelCreating(builder);
 
-            // Explicitly configure the unique index on the NormalizedUserName for your Employee entity
             builder.Entity<User>()
                 .HasIndex(u => u.UserName)
                 .IsUnique();

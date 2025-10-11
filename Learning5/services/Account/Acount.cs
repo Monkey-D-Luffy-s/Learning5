@@ -264,12 +264,39 @@ namespace Learning5.services.Account
 
             return collegesSelectList;
         }
-        public async Task<List<SelectListItem>> GetEmployeesForDropdown()
+        public async Task<List<SelectListItem>> GetEmployeesForAdminDropdown()
         {
             var roles = await _userManager.Users.Where(u => u.IsActive == true).ToListAsync();
             var roleSelectList = roles.Select(r => new SelectListItem
             {
-                Text = r.UserName + "-" + r.EmployeeName,
+                Text = r.UserName + " - " + r.EmployeeName,
+                Value = r.UserName
+            }).ToList();
+
+            return roleSelectList;
+        }
+        public async Task<List<SelectListItem>> GetEmployeesForUsersDropdown(string username)
+        {
+            var roleId = await _db.Users.Where(u => u.UserName == username).Select(e => e.DesignationId).FirstOrDefaultAsync();
+            List<string> featchRoles = new List<string>();
+            if(roleId != null && roleId == "D001")
+            {
+                featchRoles.Add("D002");
+                featchRoles.Add("D003");
+                featchRoles.Add("D005");
+            }
+            else if (roleId != null && roleId == "D004")
+            {
+                featchRoles = new List<string> { "D001" };
+            }
+            else if (roleId != null && roleId == "D006")
+            {
+                featchRoles = new List<string> { "D001", "D004" };
+            }
+            var roles = await _userManager.Users.Where(u => u.IsActive == true && featchRoles.Contains(u.DesignationId)).ToListAsync();
+            var roleSelectList = roles.Select(r => new SelectListItem
+            {
+                Text = r.UserName + " - " + r.EmployeeName,
                 Value = r.UserName
             }).ToList();
 
@@ -678,7 +705,7 @@ namespace Learning5.services.Account
         {
 
             var list = new List<DateTime>();
-            list  = await _db.TimeSheets
+            list = await _db.TimeSheets
                 .Where(u => u.UserId == userid)
                 .Select(e => e.Date.Date)
                 .ToListAsync();
@@ -687,7 +714,7 @@ namespace Learning5.services.Account
 
             await _db.SaveChangesAsync();
             return formattedDates;
-           
+
         }
 
         public async Task<JsonResult> GetHolidays(int? year, int? month)
@@ -714,7 +741,7 @@ namespace Learning5.services.Account
         public async Task<JsonResult> GetHolidaysList()
         {
             var query = _db.Holidays.AsQueryable();
-            
+
             var holidays = await query
                 .Select(h => new
                 {
@@ -746,6 +773,54 @@ namespace Learning5.services.Account
             }
         }
 
+        public async Task<JsonResult> GetEmployeeTimeSheets(string userid)
+        {
+           
+            try
+            {
+                var timesheets = await _db.TimeSheets
+                    .AsNoTracking()
+                    .Where(t => t.UserId == userid)
+                    .Select(t => new
+                    {
+                        t.TimesheetId,
+                        t.Date,
+                        t.TotalHours,
+                        t.Status,
+                        t.ApprovedBy,
+                        t.Comments
+                    })
+                    .ToListAsync();
+                return new JsonResult(timesheets);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<string> ApproveTimesheet(string timesheetId)
+        {
+            try
+            {
+                var timesheet = await _db.TimeSheets.FirstOrDefaultAsync(l => l.TimesheetId == timesheetId);
+                if (timesheet != null)
+                {
+                    timesheet.Status = "Approved";
+                    var result = await _db.SaveChangesAsync();
+
+                    return $"Timesheet Approved Successfully.";
+                }
+                else
+                {
+                    return $"Timesheet with Id '{timesheetId}' not found";
+                }
+            }
+            catch (Exception ex)
+            {
+                return ex.Message.ToString();
+            }
+        }
     }
 }
 
