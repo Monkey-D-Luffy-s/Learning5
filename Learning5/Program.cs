@@ -1,6 +1,7 @@
 using Learning5.data;
 using Learning5.Models.Account;
 using Learning5.services.Account;
+using Learning5.services.Payments;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
@@ -32,6 +33,7 @@ builder.Services.AddIdentity<User, Roles>()
     .AddDefaultTokenProviders();
 
 builder.Services.AddScoped<IAcount, Acount>();
+builder.Services.AddScoped<IPaymentService, PaymentService>();
 
 builder.Services.ConfigureApplicationCookie(options =>
 {

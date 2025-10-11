@@ -1,4 +1,5 @@
 ﻿using Learning5.Models.Account;
+using Learning5.Models.PaySlabs;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -20,6 +21,14 @@ namespace Learning5.data
         public DbSet<Designations> Designations { get; set; }
         public DbSet<Colleges> Colleges { get; set; }
         public DbSet<LeavesModule> LeavesModules { get; set; }
+
+        public DbSet<BankDetails> BankDetails { get; set; }
+
+        public DbSet<StaturaryDetailsEmployee> EmployeeStaturary { get; set; }
+
+        public DbSet<EmployeeSalary> EmployeeSalaries { get; set; }
+
+        public DbSet<EmployeeTaxDeclarations> EmployeeTaxDetails { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

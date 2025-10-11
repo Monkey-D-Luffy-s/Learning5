@@ -1,0 +1,172 @@
+﻿@model Learning5.Models.PaySlabs.BankDetails
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="~/lib/datatables.net-dt/css/datatables.datatables.min.css" rel="stylesheet" />
+<style>
+    .dt-paging-button:hover {
+        border: solid teal 2px;
+    }
+</style>
+<div class="container">
+    <div class="card bg-black p-5 rounded-2">
+        <h2 class="text-center">Add Bank Details</h2>
+        <div class="row my-3">
+           
+        </div>
+        <div class="row">
+            <span class="text-danger">@ViewBag.Message</span>
+
+            <form asp-action="AddEmployeeBankDetails" method="post" enctype="multipart/form-data">
+                <div class="row">
+                    <div class="col-md-4 my-2 ">
+                        <label for="UserName">Employee</label>
+                        <select Asp-for="UserName" class="form-control" asp-items="ViewBag.Employees">
+                            <option value="">-- Select Employee --</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-4 my-2">
+                        <label asp-for="BankName"></label>
+                        <input asp-for="BankName" class="form-control" />
+                        <span asp-validation-for="BankName" class="text-danger"></span>
+                    </div>
+                   
+                    <div class="col-sm-4 my-2">
+                        <label asp-for="AccountNumber"></label>
+                        <input asp-for="AccountNumber" class="form-control" />
+                        <span asp-validation-for="AccountNumber" class="text-danger"></span>
+                    </div>
+                    <div class="col-sm-4 my-2">
+                        <label asp-for="Branch"></label>
+                        <input asp-for="Branch" class="form-control" />
+                        <span asp-validation-for="Branch" class="text-danger"></span>
+                    </div>
+                    <div class="col-sm-4 my-2 ">
+                        <label asp-for="IFSCCode"></label>
+                        <input asp-for="IFSCCode" class="form-control" />
+                        <span asp-validation-for="IFSCCode" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-sm-4 my-2 text-center mt-4">
+
+                        <button id="btnSubmit" type="submit" class="btn btn-primary mt-2">Add BankDetails</button>
+                    </div>
+                </div>
+            </form>
+
+
+        </div>
+        <div class="row my-4">
+            <table id="tblBanks" class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>S.No.</th>
+                        <th>Employee Id</th>
+                        <th>Bank Name</th>
+                        <th>Account Number</th>
+                        <th>IFSCCode</th>
+                        <th>Branch</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/datatables.net/datatables.min.js"></script>
+    <script src="~/lib/datatables.net-dt/js/datatables.datatables.min.js"></script>
+
+    <script>
+        var jq = jQuery.noConflict();
+        jq(document).ready(function () {
+            jq('#UserName').change(function () {
+                var employeeId = jq(this).val();
+                if (employeeId) {
+                    LoadBankDetails(employeeId);
+                } else {
+                    jq('#tblLeaves tbody').empty();
+                }
+            });
+            function LoadBankDetails(employeeId) {
+                jq.ajax({
+                    url: '/Payslabs/GetBankDetails',
+                    type: 'GET',
+                    data: { employeeId: employeeId },
+                    success: function (data) {
+
+                           if ($.fn.DataTable.isDataTable('#tblTimesheet')) {
+                                $('#tblBanks').DataTable().clear().destroy();
+                            }
+
+                            console.log('Data:', data);
+                            if(data.length > 0){
+                                document.getElementById('btnSubmit').disabled = true;
+                            }
+
+                            var table = $('#tblBanks').DataTable({
+                                data: data,
+                                columns: [
+                                    { data: '', render: function(data, type, row, meta){return meta.row + 1;}},
+                                    { data: 'userName', title: 'Timesheet ID' },
+                                    { data: 'bankName', title: 'Date' },
+                                    { data: 'accountNumber', title: 'Total Hours' },
+                                    { data: 'ifscCode', title: 'Status' },
+                                    { data: 'branch', title: 'Status' },
+                                    {
+                                        data: null,
+                                        title: 'Actions',
+                                        render: function (data, type, row) {
+                                            return `<button class="btn btn-success px-4 py-1"
+                                                    onclick="return ApproveTimesheet('${row.userName}')">Edit</button>`;
+                                        }
+                                    }
+                                ],
+                                paging: true,
+                                searching: true,
+                                ordering: true,
+                                info: true
+                            });
+
+                    },
+                    error: function (xhr) {
+                        console.error('Error fetching leave balances:', xhr);
+                    }
+                });
+            }
+
+
+        });
+
+        // function ApproveTimesheet(timesheetId,hours) {
+        //     document.getElementById('workingHours').innerText = hours;
+        //     document.getElementById('hdTimehsheetId').value = timesheetId;
+        //     var myModal = new bootstrap.Modal(document.getElementById('timesheetModal'));
+        //     myModal.show();
+
+
+        // }
+
+        // function ApprovingDay(){
+        //     var timesheetId = document.getElementById('hdTimehsheetId').value;
+        //      jq.ajax({
+        //             url: '/Account/ApproveTimesheet',
+        //             type: 'POST',
+        //             data: { timesheetId: timesheetId },
+        //             success: function (response) {
+
+        //                 var myModal = new bootstrap.Modal(document.getElementById('timesheetModal'));
+
+        //                 myModal.hide();
+        //                 location.reload();
+        //             },
+        //             error: function (xhr) {
+        //                 console.error('Error approving timesheet:', xhr);
+        //                 alert('Failed to approve timesheet. Please try again.');
+        //             }
+        //      });
+        // }
+    </script>
+
+</div>

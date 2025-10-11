@@ -40,9 +40,7 @@
                         <li class="nav-item">
                             <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Account" asp-action="ApproveTimeSheet">TimeSheet Approval</a>
-                        </li>
+                        
 
                         @* <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
@@ -94,13 +92,44 @@
                                     </li>
                                     @if (User.IsInRole("Principal") || User.IsInRole("DIEO") || User.IsInRole("RJD"))
                                     {
-                                       
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" asp-area="" asp-controller="Account" asp-action="ApproveTimeSheet">TimeSheet Approval</a>
+                                        </li>
                                         <li class="nav-item">
                                             <a class="nav-link" asp-area="" asp-controller="Account" asp-action="ApproveLeaves">Approve Leaves</a>
                                         </li>
                                     }
     
                                    
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                                    Bankings
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li class="nav-item">
+                                        <a class="nav-link" asp-area="" asp-controller="Payslabs" asp-action="AddBankDetails">Bank Details</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" asp-area="" asp-controller="Payslabs" asp-action="AddEmployeeSalaryDetails">Salary Details</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" asp-area="" asp-controller="Payslabs" asp-action="AddEmployeeTaxDeductionDetails">TaxDeclaration Details</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" asp-area="" asp-controller="Payslabs" asp-action="AddEmployeeStaturaryDetails">Staturary Details</a>
+                                    </li>
+                                    @if (User.IsInRole("Principal") || User.IsInRole("DIEO") || User.IsInRole("RJD"))
+                                    {
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" asp-area="" asp-controller="Account" asp-action="ApproveLeaves">Approve Leaves</a>
+                                        </li>
+                                    }
+
+
                                 </ul>
                             </li>
                             @* <li class="nav-item dropdown">

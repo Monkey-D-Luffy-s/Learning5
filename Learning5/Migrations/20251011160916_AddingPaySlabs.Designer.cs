@@ -4,6 +4,7 @@ using Learning5.data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Learning5.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251011160916_AddingPaySlabs")]
+    partial class AddingPaySlabs
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -334,9 +337,6 @@ namespace Learning5.Migrations
                     b.Property<string>("Branch")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Flag")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("IFSCCode")
                         .HasColumnType("nvarchar(max)");
 
@@ -371,9 +371,6 @@ namespace Learning5.Migrations
                     b.Property<DateTime?>("EffectiveTo")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Flag")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<decimal>("HRA")
                         .HasColumnType("decimal(18,2)");
 
@@ -399,9 +396,6 @@ namespace Learning5.Migrations
                     b.Property<string>("FinancialYear")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Flag")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("InvestmentProof")
                         .HasColumnType("nvarchar(max)");
 
@@ -425,9 +419,6 @@ namespace Learning5.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ESINumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Flag")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PANNumber")
