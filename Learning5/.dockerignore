@@ -1,0 +1,9 @@
+bin/
+obj/
+*.md
+.git/
+.gitignore
+.vscode/
+*.sln
+Dockerfile
+*.csproj
