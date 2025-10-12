@@ -23,7 +23,7 @@
         }
 }
 
-<body>
+<body class="h-100 d-flex flex-column justify-content-between min-vh-100">
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark text-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
@@ -235,15 +235,15 @@
             </div>
         </nav>
     </header>
-    <div class="container">
+    <div class="container flex-fill">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
+    <footer class="border-top footer text-muted align-bottom py-2 mt-auto">
         <div class="container">
-            &copy; 2025 - Learning5 - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            &copy; 2025 - Learning5 By  - <a asp-area="" asp-controller="Home" asp-action="Privacy">SaiKumar Billa</a>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

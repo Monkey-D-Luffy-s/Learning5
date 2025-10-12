@@ -5,11 +5,21 @@ using Learning5.services.Payments;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
+using System;
 
 var builder = WebApplication.CreateBuilder(args);
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-
+var connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
+//var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+//await DataSeeder.SeedAdminUser(app.Services);
 // Configure Serilog
+if (!string.IsNullOrEmpty(connectionString))
+{
+    Console.WriteLine($"Connection string: {connectionString}");
+}
+else
+{
+    throw new Exception("DB_CONNECTION_STRING not set");
+}
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Information()
     .WriteTo.Console()
@@ -26,7 +36,7 @@ builder.Host.UseSerilog();
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(connectionString));
 
 builder.Services.AddIdentity<User, Roles>()
     .AddEntityFrameworkStores<AppDbContext>()
@@ -43,7 +53,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 });
 
 var app = builder.Build();
-
+await Dataseeder.SeedAdminUser(app.Services);
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
